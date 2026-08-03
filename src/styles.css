@@ -177,6 +177,7 @@ button { cursor: pointer; }
 @keyframes lift-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes hero-layer-enter { from { opacity: 0; transform: translate3d(var(--intro-x), var(--intro-y), 0) scale(.96); } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
 @keyframes hero-brand-in { from { opacity: 0; transform: translateY(-14px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hero-brand-in-mobile { from { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(.92); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
 .reveal { animation: lift-in .7s .1s ease both; }
 
 @media (max-width: 920px) {
@@ -201,15 +202,17 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 600px) {
-  .hero { height: 700px; align-items: end; padding-bottom: 76px; }
-  .hero-brand { z-index: 1; top: 28px; left: 50%; width: 285px; transform: translateX(-50%); filter: drop-shadow(0 9px 18px rgba(0,0,0,.42)); }
+  .hero { height: 720px; align-items: end; padding-bottom: 44px; }
+  .hero-brand { z-index: 1; top: 22px; left: 50%; width: 260px; transform: translateX(-50%); animation: hero-brand-in-mobile .8s .12s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 9px 18px rgba(0,0,0,.42)); }
   .hero-layer { object-position: center; }
   .hero-layer-stage > img { transform: none; transition: none; }
-  .hero-layer-stage--motorcycle { width: 72vw; top: 30%; left: -16%; right: auto; bottom: auto; }
-  .hero-layer-stage--technician { width: 43vw; top: 19%; left: 29%; right: auto; }
-  .hero-layer-stage--boat { width: 72vw; top: 34%; right: -17%; }
-  .hero::after { background: linear-gradient(180deg, rgba(2,11,26,.18) 0%, rgba(2,11,26,.34) 39%, rgba(2,11,26,.9) 73%, rgba(2,11,26,.98) 100%); }
-  .hero-content { width: calc(100% - 48px); margin-left: 24px; padding-top: 0; }
+  .hero-layer-stage > img { opacity: .72; }
+  .hero-layer-stage--motorcycle { width: 64vw; top: 31%; left: -15%; right: auto; bottom: auto; }
+  .hero-layer-stage--technician { width: 34vw; top: 22%; left: 33%; right: auto; }
+  .hero-layer-stage--boat { width: 64vw; top: 34%; right: -15%; }
+  .hero::after { background: linear-gradient(180deg, rgba(2,11,26,.2) 0%, rgba(2,11,26,.3) 38%, rgba(2,11,26,.88) 67%, rgba(2,11,26,.99) 100%); }
+  .hero-content { isolation: isolate; width: calc(100% - 32px); margin-left: 16px; padding: 26px 16px 14px; }
+  .hero-content::before { content: ""; position: absolute; z-index: -1; inset: 0 -4px; border-radius: 18px; background: linear-gradient(180deg, rgba(2,11,26,.42), rgba(2,11,26,.88) 34%, rgba(2,11,26,.96)); box-shadow: 0 16px 34px rgba(0,0,0,.18); }
   .hero h1 { font-size: 55px; }
   .hero-copy { font-size: 17px; margin: 24px 0; }
   .hero-actions { gap: 10px; }

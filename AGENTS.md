@@ -8,7 +8,7 @@ Mobile hero behavior: treat the hero background as a static composition on touch
 
 Mobile hero preference: hide the three vehicle cutout images and show the complete transparent VICTIKER logo, including the name and service offering, centered above the copy.
 
-Mobile/header contrast preference: avoid navy-on-navy branding; use a light, cool background or a light logo backing so the royal-blue logo, orange accent, and text remain clearly readable.
+Mobile/header contrast preference: avoid navy-on-navy branding; use a light, cool background so the royal-blue logo, orange accent, and text remain clearly readable. Keep the mobile hero as one coherent surface, without floating logo or content cards.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 

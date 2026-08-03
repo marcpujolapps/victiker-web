@@ -171,7 +171,8 @@ export function App() {
             <div className="hero-layer-stage hero-layer-stage--technician"><img src="/assets/hero-layers/hero-technician-cutout-v3.webp" alt="" /></div>
             <div className="hero-layer-stage hero-layer-stage--motorcycle"><img src="/assets/hero-layers/hero-motorcycle-cutout-v3.webp" alt="" /></div>
           </div>
-          <img className="hero-brand" src="/assets/victiker-emblem-v2.webp" alt="Victiker" />
+          <img className="hero-brand hero-brand--emblem" src="/assets/victiker-emblem-v2.webp" alt="Victiker" />
+          <img className="hero-brand hero-brand--full" src="/assets/victiker-logo.png" alt="Victiker: taller, reparación, piezas, repuestos y motores de barco" />
           <div className="hero-content reveal">
             <p className="hero-mark">Taller móvil · motos y embarcaciones</p>
             <h1>Tu taller,<br />donde lo <em>necesitas.</em></h1>

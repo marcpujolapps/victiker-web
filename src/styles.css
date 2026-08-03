@@ -57,6 +57,7 @@ button { cursor: pointer; }
 .hero-layer-stage--technician img { transition-duration: .21s; }
 .hero-layer-stage--motorcycle img { transition-duration: .12s; }
 .hero-brand { position: absolute; z-index: 0; top: clamp(15px, 2.7vh, 28px); left: clamp(24px, 8.2vw, 140px); width: clamp(152px, 14vw, 225px); height: auto; filter: drop-shadow(0 10px 24px rgba(0,0,0,.35)); animation: hero-brand-in .8s .12s cubic-bezier(.2,.8,.2,1) both; pointer-events: none; }
+.hero-brand--full { display: none; }
 .hero::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(2,11,26,.96) 0%, rgba(2,11,26,.77) 33%, rgba(2,11,26,.12) 67%, rgba(2,11,26,.04) 100%); }
 .hero-content { position: relative; z-index: 1; width: min(560px, calc(100% - 48px)); margin-left: clamp(24px, 8.2vw, 140px); padding-top: 10px; }
 .hero-mark, .section-eyebrow { margin: 0 0 22px; color: var(--orange); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -203,8 +204,10 @@ button { cursor: pointer; }
 
 @media (max-width: 600px) {
   .hero { height: 720px; align-items: end; padding-bottom: 44px; }
-  .hero-brand { z-index: 1; top: 22px; left: 50%; width: 260px; transform: translateX(-50%); animation: hero-brand-in-mobile .8s .12s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 9px 18px rgba(0,0,0,.42)); }
+  .hero-brand--emblem { display: none; }
+  .hero-brand--full { display: block; z-index: 1; top: 18px; left: 50%; width: min(84vw, 350px); transform: translateX(-50%); animation: hero-brand-in-mobile .8s .12s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 9px 18px rgba(0,0,0,.42)); }
   .hero-layer { object-position: center; }
+  .hero-layer-stage { display: none; }
   .hero-layer-stage > img { transform: none; transition: none; }
   .hero-layer-stage > img { opacity: .72; }
   .hero-layer-stage--motorcycle { width: 64vw; top: 31%; left: -15%; right: auto; bottom: auto; }

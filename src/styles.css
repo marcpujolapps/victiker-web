@@ -201,14 +201,15 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 600px) {
-  .hero { height: 670px; align-items: end; padding-bottom: 90px; }
-  .hero-brand { top: 18px; left: 24px; width: 146px; }
-  .hero-layer { object-position: 60% center; }
-  .hero-layer-stage--boat { width: 70vw; top: -3%; right: -29%; }
-  .hero-layer-stage--technician { width: 59vw; top: 8%; right: -13%; }
-  .hero-layer-stage--motorcycle { width: 108vw; right: -39%; bottom: -8%; }
-  .hero::after { background: linear-gradient(90deg, rgba(2,11,26,.96) 0%, rgba(2,11,26,.8) 100%), linear-gradient(0deg, rgba(2,11,26,.6), transparent); }
-  .hero-content { margin-left: 24px; }
+  .hero { height: 700px; align-items: end; padding-bottom: 76px; }
+  .hero-brand { z-index: 1; top: 28px; left: 50%; width: 285px; transform: translateX(-50%); filter: drop-shadow(0 9px 18px rgba(0,0,0,.42)); }
+  .hero-layer { object-position: center; }
+  .hero-layer-stage > img { transform: none; transition: none; }
+  .hero-layer-stage--motorcycle { width: 72vw; top: 30%; left: -16%; right: auto; bottom: auto; }
+  .hero-layer-stage--technician { width: 43vw; top: 19%; left: 29%; right: auto; }
+  .hero-layer-stage--boat { width: 72vw; top: 34%; right: -17%; }
+  .hero::after { background: linear-gradient(180deg, rgba(2,11,26,.18) 0%, rgba(2,11,26,.34) 39%, rgba(2,11,26,.9) 73%, rgba(2,11,26,.98) 100%); }
+  .hero-content { width: calc(100% - 48px); margin-left: 24px; padding-top: 0; }
   .hero h1 { font-size: 55px; }
   .hero-copy { font-size: 17px; margin: 24px 0; }
   .hero-actions { gap: 10px; }

@@ -203,21 +203,16 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 600px) {
-  .hero { height: 720px; align-items: end; padding-bottom: 44px; background: linear-gradient(160deg, #f5f8fb 0%, #e4edf4 52%, #d5e3ee 100%); color: var(--ink); }
+  .hero { height: 720px; align-items: end; padding-bottom: 44px; background: #eef3f7; color: var(--ink); }
   .hero-brand--emblem { display: none; }
   .hero-brand--full { display: block; z-index: 1; top: 18px; left: 50%; width: min(84vw, 350px); transform: translateX(-50%); animation: hero-brand-in-mobile .8s .12s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 7px 12px rgba(2,11,26,.14)); }
-  .hero-layer { object-position: center; }
-  .hero-layer-stage { display: none; }
+  .hero-layer--background, .hero-layer-stage { display: none; }
   .hero-layer-stage > img { transform: none; transition: none; }
-  .hero-layer-stage > img { opacity: .72; }
-  .hero-layer-stage--motorcycle { width: 64vw; top: 31%; left: -15%; right: auto; bottom: auto; }
-  .hero-layer-stage--technician { width: 34vw; top: 22%; left: 33%; right: auto; }
-  .hero-layer-stage--boat { width: 64vw; top: 34%; right: -15%; }
-  .hero::after { background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.08) 52%, rgba(214,228,238,.28) 100%); }
+  .hero::after { display: none; }
   .hero-content { width: calc(100% - 48px); margin-left: 24px; padding: 0; }
+  .hero-mark, .hero-scroll { display: none; }
   .hero h1 { color: var(--blue-deep); }
   .hero-copy { color: var(--ink); }
-  .hero-scroll { color: var(--blue-deep); }
   .hero .button--ghost { color: var(--blue-deep); border-color: var(--blue-deep); }
   .hero h1 { font-size: 55px; }
   .hero-copy { font-size: 17px; margin: 24px 0; }

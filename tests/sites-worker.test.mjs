@@ -61,6 +61,20 @@ test("does not turn missing API or write requests into the app shell", async () 
   }
 });
 
+test("keeps email requests out of the static asset handler", async () => {
+  let assetCalls = 0;
+  const response = await worker.fetch(new Request("https://example.test/api/requests", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ type: "appointment", name: "Ada", phone: "600 000 000" }),
+  }), {
+    ASSETS: { fetch: async () => { assetCalls += 1; return new Response("asset"); } },
+  });
+
+  assert.equal(response.status, 503);
+  assert.equal(assetCalls, 0);
+});
+
 test("emits the files required by Sites packaging", async () => {
   await access(new URL("../dist/client/index.html", import.meta.url));
   await access(new URL("../dist/server/index.js", import.meta.url));

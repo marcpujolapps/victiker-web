@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function admin() { return request.auth != null && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid)) && firestore.get(/databases/(default)/documents/admins/$(request.auth.uid)).data.active == true; }
+    match /catalog-imports/{uid}/{fileName} {
+      allow read: if admin();
+      allow write: if admin() && request.auth.uid == uid && request.resource.size < 25 * 1024 * 1024 && request.resource.contentType.matches('text/csv|application/vnd.ms-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    }
+  }
+}

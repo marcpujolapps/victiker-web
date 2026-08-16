@@ -10,6 +10,8 @@ Mobile hero preference: hide the three vehicle cutout images and show the comple
 
 Mobile/header contrast preference: avoid navy-on-navy branding; use a light, cool background so the royal-blue logo, orange accent, and text remain clearly readable. Keep the mobile hero as one coherent solid surface, without the photographic base texture, floating logo/content cards, or an eyebrow line over the logo.
 
+Solicitud de repuestos: mientras haya piezas, mantén una barra fija y discreta en el catálogo con acceso claro a revisar y enviar la solicitud. Tras añadir, muestra únicamente una confirmación visual pequeña sobre el botón de la barra durante tres segundos.
+
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
 Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.

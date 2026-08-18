@@ -47,6 +47,8 @@ const pageMetadata = {
   },
 }
 
+const socialImage = 'https://victiker.com/assets/victiker-hero.png'
+
 function setMeta(name, content, property = false) {
   const attribute = property ? 'property' : 'name'
   let element = document.head.querySelector(`meta[${attribute}="${name}"]`)
@@ -82,8 +84,11 @@ export function App() {
     setMeta('og:title', metadata.title, true)
     setMeta('og:description', metadata.description, true)
     setMeta('og:url', canonicalUrl, true)
+    setMeta('og:image', socialImage, true)
+    setMeta('og:image:secure_url', socialImage, true)
     setMeta('twitter:title', metadata.title)
     setMeta('twitter:description', metadata.description)
+    setMeta('twitter:image', socialImage)
     setMeta('robots', metadata.noindex ? 'noindex,nofollow' : 'index,follow')
 
     const canonical = document.head.querySelector('link[rel="canonical"]')

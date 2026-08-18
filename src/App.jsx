@@ -19,6 +19,45 @@ const routes = {
   '/admin': AdminPage,
 }
 
+const pageMetadata = {
+  '/': {
+    title: 'Victiker | Taller móvil para motos y embarcaciones',
+    description: 'Reparación, mantenimiento, diagnosis y repuestos para motos y embarcaciones.',
+  },
+  '/servicios': {
+    title: 'Servicios para motos y embarcaciones | Victiker',
+    description: 'Reparación, mantenimiento y diagnosis profesional para motos y embarcaciones.',
+  },
+  '/taller-movil': {
+    title: 'Taller móvil con cita previa | Victiker',
+    description: 'Servicio técnico móvil para motos y embarcaciones, donde lo necesitas y con cita previa.',
+  },
+  '/catalogo': {
+    title: 'Catálogo de repuestos | Victiker',
+    description: 'Consulta repuestos para motos y embarcaciones y envía tu solicitud a Victiker.',
+  },
+  '/contacto': {
+    title: 'Contacto y citas | Victiker',
+    description: 'Contacta con Victiker para solicitar asistencia, mantenimiento o repuestos.',
+  },
+  '/admin': {
+    title: 'Administración | Victiker',
+    description: 'Área privada de administración de Victiker.',
+    noindex: true,
+  },
+}
+
+function setMeta(name, content, property = false) {
+  const attribute = property ? 'property' : 'name'
+  let element = document.head.querySelector(`meta[${attribute}="${name}"]`)
+  if (!element) {
+    element = document.createElement('meta')
+    element.setAttribute(attribute, name)
+    document.head.appendChild(element)
+  }
+  element.setAttribute('content', content)
+}
+
 export function App() {
   const [path, setPath] = useState(() => window.location.pathname)
   const [cart, setCart] = useState([])
@@ -34,6 +73,22 @@ export function App() {
       window.clearTimeout(feedbackTimer.current)
     }
   }, [])
+
+  useEffect(() => {
+    const metadata = pageMetadata[path] ?? pageMetadata['/']
+    const canonicalUrl = `https://victiker.com${path === '/' ? '/' : path}`
+    document.title = metadata.title
+    setMeta('description', metadata.description)
+    setMeta('og:title', metadata.title, true)
+    setMeta('og:description', metadata.description, true)
+    setMeta('og:url', canonicalUrl, true)
+    setMeta('twitter:title', metadata.title)
+    setMeta('twitter:description', metadata.description)
+    setMeta('robots', metadata.noindex ? 'noindex,nofollow' : 'index,follow')
+
+    const canonical = document.head.querySelector('link[rel="canonical"]')
+    canonical?.setAttribute('href', canonicalUrl)
+  }, [path])
 
   function navigate(nextPath) {
     if (nextPath === path) return window.scrollTo({ top: 0, behavior: 'smooth' })

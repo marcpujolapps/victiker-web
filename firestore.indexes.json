@@ -8,6 +8,12 @@
     ] },
     { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
     ] }
   ],
   "fieldOverrides": []

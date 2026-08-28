@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+import { getFirestore, FieldPath, FieldValue, Timestamp } from 'firebase-admin/firestore'
 import { getStorage } from 'firebase-admin/storage'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
+import { onSchedule } from 'firebase-functions/v2/scheduler'
 import { onObjectFinalized } from 'firebase-functions/v2/storage'
 import * as XLSX from 'xlsx'
+import { BihrClient, extractCatalogRows, toBihrCatalogItem } from './bihr.js'
 
 initializeApp()
 const db = getFirestore()
@@ -106,3 +108,125 @@ function parseNumber(value) { return Number(String(value).replace(/[^0-9,.-]/g, 
 function normalize(value = '') { return String(value).trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim() }
 function normalizeVehicle(value) { const normalized = normalize(value); return ['moto', 'barco'].includes(normalized) ? normalized : 'unclassified' }
 function searchPrefixes(...values) { const prefixes = new Set(); values.map(normalize).filter(Boolean).forEach((value) => value.split(' ').forEach((word) => { for (let size = 2; size <= Math.min(word.length, 32); size += 1) prefixes.add(word.slice(0, size)) })); return [...prefixes] }
+
+async function assertAdmin(uid) {
+  if (!uid) throw new HttpsError('unauthenticated', 'Inicia sesión para sincronizar Bihr.')
+  const admin = await db.doc(`admins/${uid}`).get()
+  if (!admin.exists || admin.data().active !== true) throw new HttpsError('permission-denied', 'No tienes permisos de administración.')
+}
+
+async function startBihrJob(trigger, uid = null) {
+  const job = db.collection('bihrSyncJobs').doc()
+  const integration = db.doc('integrations/bihr')
+  const startedAt = Timestamp.now()
+  await db.runTransaction(async (transaction) => {
+    const current = await transaction.get(integration)
+    const data = current.data()
+    const runningSince = data?.startedAt?.toMillis?.() || 0
+    if (data?.status === 'running' && runningSince > Date.now() - 45 * 60 * 1000) throw new Error('BIHR_SYNC_RUNNING')
+    transaction.set(integration, { status: 'running', jobId: job.id, trigger, startedAt, startedBy: uid }, { merge: true })
+    transaction.create(job, { status: 'downloading', trigger, createdAt: startedAt, startedAt, createdBy: uid, processed: 0, archived: 0, images: 0 })
+  })
+  return { job, integration }
+}
+
+async function writeBihrRows(rows, syncId, job) {
+  const categories = new Map()
+  let processed = 0
+  let rejected = 0
+  let images = 0
+
+  for (let offset = 0; offset < rows.length; offset += 400) {
+    const writer = db.bulkWriter()
+    const writes = []
+    for (const row of rows.slice(offset, offset + 400)) {
+      try {
+        const item = toBihrCatalogItem(row, { syncId, serverTimestamp: FieldValue.serverTimestamp() })
+        if (item.imageUrl) images += 1
+        if (item.categoryId && item.sourceCategory) categories.set(item.categoryId, item.sourceCategory)
+        const documentId = item.referenceNormalized || `bihr-${Buffer.from(item.reference).toString('base64url')}`
+        writes.push(writer.set(db.collection('catalog').doc(documentId), item, { merge: true }))
+        processed += 1
+      } catch {
+        rejected += 1
+      }
+    }
+    await Promise.all(writes)
+    await writer.close()
+    await job.update({ status: 'processing', processed, rejected, images, total: rows.length })
+  }
+
+  const taxonomyWriter = db.bulkWriter()
+  const taxonomyWrites = [...categories].map(([id, name]) => taxonomyWriter.set(db.collection('taxonomies').doc(id), {
+    name, vehicleType: 'moto', parentId: null, active: true, source: 'bihr', updatedAt: FieldValue.serverTimestamp(), updatedBy: 'bihr-sync',
+  }, { merge: true }))
+  await Promise.all(taxonomyWrites)
+  await taxonomyWriter.close()
+  return { processed, rejected, images, categories: categories.size }
+}
+
+async function archiveMissingBihrRows(syncId, job) {
+  let lastDocument = null
+  let archived = 0
+  while (true) {
+    let catalogQuery = db.collection('catalog').where('source', '==', 'bihr').orderBy(FieldPath.documentId()).limit(500)
+    if (lastDocument) catalogQuery = catalogQuery.startAfter(lastDocument)
+    const snapshot = await catalogQuery.get()
+    if (snapshot.empty) break
+    const writer = db.bulkWriter()
+    const writes = snapshot.docs.flatMap((entry) => entry.data().bihr?.syncId === syncId ? [] : [writer.update(entry.ref, {
+      status: 'archived', updatedAt: FieldValue.serverTimestamp(), updatedBy: 'bihr-sync', 'bihr.available': false,
+    })])
+    archived += writes.length
+    await Promise.all(writes)
+    await writer.close()
+    await job.update({ archived })
+    lastDocument = snapshot.docs.at(-1)
+  }
+  return archived
+}
+
+async function executeBihrSync({ trigger, uid = null }) {
+  let refs
+  try {
+    refs = await startBihrJob(trigger, uid)
+  } catch (error) {
+    if (error.message === 'BIHR_SYNC_RUNNING') throw new Error('Ya hay una sincronización de Bihr en curso.')
+    throw error
+  }
+
+  const { job, integration } = refs
+  try {
+    const username = process.env.BIHR_USERNAME
+    const password = process.env.BIHR_PASSWORD
+    if (!username || !password) throw new Error('Faltan BIHR_USERNAME y BIHR_PASSWORD en functions/.env.')
+    const client = new BihrClient({ username, password })
+    const archive = await client.downloadEssentialHardPartCatalog()
+    const rows = extractCatalogRows(archive)
+    if (!rows.length) throw new Error('El catálogo de Bihr está vacío.')
+    await job.update({ status: 'processing', total: rows.length, downloadedAt: FieldValue.serverTimestamp() })
+    const result = await writeBihrRows(rows, job.id, job)
+    const archived = await archiveMissingBihrRows(job.id, job)
+    const completed = { status: 'completed', ...result, archived, finishedAt: FieldValue.serverTimestamp() }
+    await job.update(completed)
+    await integration.set({ ...completed, jobId: job.id, lastSuccessfulJobId: job.id, lastSuccessfulSyncAt: FieldValue.serverTimestamp() }, { merge: true })
+    return { jobId: job.id, ...result, archived }
+  } catch (error) {
+    console.error('Bihr catalog sync failed', job.id, error)
+    const failure = { status: 'failed', error: error.message || 'No se ha podido sincronizar Bihr.', finishedAt: FieldValue.serverTimestamp() }
+    await Promise.all([job.update(failure), integration.set({ ...failure, jobId: job.id }, { merge: true })])
+    throw error
+  }
+}
+
+export const startBihrCatalogSync = onCall({
+  region: 'europe-west1', timeoutSeconds: 1800, memory: '1GiB', maxInstances: 1,
+}, async (request) => {
+  await assertAdmin(request.auth?.uid)
+  try { return await executeBihrSync({ trigger: 'manual', uid: request.auth.uid }) }
+  catch (error) { throw new HttpsError(error.message.includes('en curso') ? 'already-exists' : 'internal', error.message) }
+})
+
+export const syncBihrCatalogDaily = onSchedule({
+  region: 'europe-west1', schedule: '30 5 * * *', timeZone: 'Europe/Madrid', timeoutSeconds: 1800, memory: '1GiB', maxInstances: 1,
+}, async () => executeBihrSync({ trigger: 'scheduled' }))

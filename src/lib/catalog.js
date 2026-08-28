@@ -18,6 +18,17 @@ export function searchPrefixes(...values) {
   return [...prefixes]
 }
 
+function optionalImageUrl(value) {
+  if (!value?.trim()) return null
+  try {
+    const url = new URL(value.trim())
+    if (!['http:', 'https:'].includes(url.protocol)) throw new Error()
+    return url.toString()
+  } catch {
+    throw new Error('La imagen debe ser una URL web válida.')
+  }
+}
+
 export function catalogPayload(input, uid) {
   const reference = input.reference?.trim()
   const description = input.description?.trim()
@@ -29,7 +40,7 @@ export function catalogPayload(input, uid) {
     reference, referenceNormalized: normalize(reference), description, descriptionNormalized: normalize(description),
     searchPrefixes: searchPrefixes(reference, description), price, currency: 'EUR', discount,
     vehicleType: input.vehicleType || 'unclassified', categoryId: input.categoryId || null, subcategoryId: input.subcategoryId || null,
-    status: input.status || 'active', updatedAt: serverTimestamp(), updatedBy: uid,
+    status: input.status || 'active', imageUrl: optionalImageUrl(input.imageUrl), updatedAt: serverTimestamp(), updatedBy: uid,
   }
 }
 

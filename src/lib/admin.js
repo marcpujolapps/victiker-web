@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { collection, doc, getDoc, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { collection, doc, getDoc, limit, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { ref, uploadBytesResumable } from 'firebase/storage'
 import { auth, db, functions, requireFirebase, storage } from './firebase'
@@ -25,3 +25,9 @@ export async function startImport(file, onProgress = () => {}) {
   return new Promise((resolve, reject) => upload.on('state_changed', (snap) => onProgress(Math.round(snap.bytesTransferred / snap.totalBytes * 100)), reject, () => resolve({ importId, progress: 100 })))
 }
 export function watchImportJobs(callback) { requireFirebase(); return onSnapshot(query(collection(db, 'importJobs'), orderBy('createdAt', 'desc')), (snapshot) => callback(snapshot.docs.map((entry) => ({ id: entry.id, ...entry.data() })))) }
+export async function startBihrSync() {
+  requireFirebase()
+  const sync = httpsCallable(functions, 'startBihrCatalogSync', { timeout: 30 * 60 * 1000 })
+  return (await sync()).data
+}
+export function watchBihrSyncJobs(callback) { requireFirebase(); return onSnapshot(query(collection(db, 'bihrSyncJobs'), orderBy('createdAt', 'desc'), limit(10)), (snapshot) => callback(snapshot.docs.map((entry) => ({ id: entry.id, ...entry.data() })))) }

@@ -1,5 +1,13 @@
 {
   "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
   "storage": { "rules": "storage.rules" },
-  "functions": [{ "source": "functions", "codebase": "catalog-import" }]
+  "functions": [{ "source": "functions", "codebase": "catalog-import" }],
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "functions": { "port": 5001 },
+    "storage": { "port": 9199 },
+    "ui": { "enabled": false },
+    "singleProjectMode": true
+  }
 }

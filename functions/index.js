@@ -178,8 +178,10 @@ async function archiveMissingBihrRows(syncId, job) {
       status: 'archived', updatedAt: FieldValue.serverTimestamp(), updatedBy: 'bihr-sync', 'bihr.available': false,
     })])
     archived += writes.length
-    await Promise.all(writes)
-    await writer.close()
+    if (writes.length) {
+      await Promise.all(writes)
+      await writer.close()
+    }
     await job.update({ archived })
     lastDocument = snapshot.docs.at(-1)
   }

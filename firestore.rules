@@ -5,7 +5,9 @@ service cloud.firestore {
     function admin() { return signedIn() && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true; }
     match /catalog/{item} {
       allow read: if resource.data.status == 'active' || admin();
-      allow create, update, delete: if admin();
+      allow create: if admin();
+      allow update: if admin() && (resource.data.source != 'bihr' || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'updatedBy']));
+      allow delete: if admin();
     }
     match /taxonomies/{document=**} { allow read: if true; allow write: if admin(); }
     match /admins/{uid} { allow read: if signedIn() && request.auth.uid == uid; allow write: if false; }

@@ -71,6 +71,7 @@ export async function getCatalogCount(filters = {}) {
 
 export async function saveCatalogItem(id, input, uid) {
   requireFirebase()
+  if (id && input.source === 'bihr') throw new Error('Las referencias de Bihr se actualizan automáticamente y no se pueden editar.')
   const payload = catalogPayload(input, uid)
   if (id) { await updateDoc(doc(db, 'catalog', id), payload); return id }
   const target = doc(db, 'catalog', payload.referenceNormalized)

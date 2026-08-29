@@ -121,6 +121,7 @@
 .admin-editor__image { width:100%; max-height:220px; object-fit:contain; border:1px solid var(--admin-border); border-radius:6px; background:#f8f9fa; }
 .bihr-sync-card { max-width:1120px; margin:0 auto; display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center; padding:24px; border:1px solid var(--admin-border); border-radius:8px; background:#fafbfc; }
 .bihr-sync-card__intro { display:flex; gap:14px; align-items:flex-start; }
+.bihr-sync-card__actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; }
 .bihr-sync-card__intro>svg { flex:none; color:#3268b2; }
 .bihr-sync-card h2,.bihr-sync-card p { margin:0; }
 .bihr-sync-card h2 { color:#24272b; font-size:17px; }
@@ -131,6 +132,34 @@
 .bihr-sync-card__status strong { color:#30343a; font-size:13px; }
 .bihr-sync-card__status p { grid-column:1/-1; padding:9px 11px; color:#9b1c1c; background:#fff1f1; }
 .imports-section-title { max-width:1120px; margin:38px auto 14px; color:#34373c; font-size:14px; font-weight:650; }
+.imports-sections { max-width:1120px; margin:0 auto; display:grid; gap:24px; }
+.import-card { overflow:hidden; border:1px solid var(--admin-border); border-radius:10px; background:#fff; }
+.import-card--moto { border-top:4px solid #3268b2; }
+.import-card--boat { border-top:4px solid var(--orange); }
+.import-card__header { display:grid; grid-template-columns:44px minmax(0,1fr); gap:15px; padding:25px 26px 20px; }
+.import-card__icon { width:44px; height:44px; display:grid; place-items:center; border-radius:9px; background:#edf3fb; color:#3268b2; }
+.import-card--boat .import-card__icon { background:#fff2e9; color:var(--orange); }
+.import-card__eyebrow { display:block; margin-bottom:4px; color:#3268b2; font-size:10px; font-weight:750; letter-spacing:.11em; text-transform:uppercase; }
+.import-card--boat .import-card__eyebrow { color:#d95100; }
+.import-card h2 { margin:0; color:#24272b; font-size:19px; letter-spacing:-.025em; }
+.import-card__header p { max-width:720px; margin:7px 0 0; color:#737a84; font-size:13px; line-height:1.55; }
+.import-card__actions { display:flex; flex-wrap:wrap; gap:10px; padding:0 26px 24px 85px; }
+.import-card .button { min-height:38px; border-radius:6px; padding:9px 14px; font-size:13px; text-decoration:none; }
+.import-card .button--secondary { border-color:#d5dae1; background:#fff; color:#4f5660; }
+.import-card .button--secondary:hover { border-color:#b7bec8; background:#f5f6f8; color:#25282d; }
+.bihr-sync-status { display:grid; grid-template-columns:repeat(6,minmax(100px,1fr)); gap:15px; padding:20px 26px; border-top:1px solid var(--admin-border); background:#fafbfc; }
+.bihr-sync-status span { display:grid; gap:4px; }
+.bihr-sync-status small { color:#8a9099; font-size:10px; letter-spacing:.06em; text-transform:uppercase; }
+.bihr-sync-status strong { color:#30343a; font-size:12px; }
+.bihr-sync-status>p { grid-column:1/-1; margin:0; padding:9px 11px; color:#9b1c1c; background:#fff1f1; font-size:12px; }
+.bihr-sync-progress { grid-column:1/-1; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:12px; }
+.bihr-sync-progress progress { width:100%; height:7px; border:0; border-radius:999px; overflow:hidden; accent-color:#3268b2; }
+.bihr-sync-progress small { white-space:nowrap; }
+.boat-import-form { display:grid; grid-template-columns:minmax(240px,1fr) auto; align-items:end; gap:20px; padding:4px 26px 26px 85px; }
+.boat-import-form label { display:grid; gap:8px; color:#555b64; font-size:12px; font-weight:600; }
+.boat-import-form input { width:100%; min-height:42px; padding:8px 10px; border:1px solid #d8dce2; border-radius:6px; background:#fbfbfc; color:#696f78; font-size:12px; }
+.boat-import-form .import-card__actions { justify-content:flex-end; padding:0; }
+.import-card .import-jobs { margin:0; padding:0 26px 10px 85px; border-top:1px solid var(--admin-border); background:#fafbfc; }
 .is-spinning { animation:spin .9s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
@@ -151,8 +180,17 @@
   .admin-content,.bihr-sync-card,.bihr-sync-card__intro,.import-dropzone { min-width:0; width:100%; }
   .bihr-sync-card { grid-template-columns:minmax(0,1fr); padding:18px; }
   .bihr-sync-card .button { justify-self:stretch; width:100%; justify-content:center; white-space:normal; }
+  .bihr-sync-card__actions { display:grid; }
   .bihr-sync-card__status { grid-column:1; grid-template-columns:repeat(2,minmax(0,1fr)); }
   .import-dropzone input { max-width:100%; }
+  .import-card__header { grid-template-columns:38px minmax(0,1fr); padding:20px 18px 16px; }
+  .import-card__icon { width:38px; height:38px; }
+  .import-card__actions,.boat-import-form,.import-card .import-jobs { padding-left:18px; padding-right:18px; }
+  .import-card__actions { display:grid; }
+  .import-card .button { width:100%; }
+  .bihr-sync-status { grid-template-columns:repeat(2,minmax(0,1fr)); padding:18px; }
+  .bihr-sync-progress { grid-template-columns:1fr; }
+  .boat-import-form { grid-template-columns:1fr; }
 }
 
 @media (min-width:601px) and (max-width:920px) {

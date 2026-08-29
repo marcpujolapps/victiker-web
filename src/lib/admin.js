@@ -17,7 +17,7 @@ export async function logout() { requireFirebase(); return signOut(auth) }
 export async function startImport(file, onProgress = () => {}) {
   requireFirebase()
   const extension = file.name.split('.').pop().toLowerCase()
-  if (!['csv', 'xls', 'xlsx'].includes(extension)) throw new Error('Selecciona un CSV, XLS o XLSX.')
+  if (extension !== 'csv') throw new Error('Selecciona un archivo CSV.')
   const create = httpsCallable(functions, 'startCatalogImport')
   const response = await create({ fileName: file.name, contentType: file.type || 'application/octet-stream' })
   const { importId, path } = response.data
@@ -25,9 +25,9 @@ export async function startImport(file, onProgress = () => {}) {
   return new Promise((resolve, reject) => upload.on('state_changed', (snap) => onProgress(Math.round(snap.bytesTransferred / snap.totalBytes * 100)), reject, () => resolve({ importId, progress: 100 })))
 }
 export function watchImportJobs(callback) { requireFirebase(); return onSnapshot(query(collection(db, 'importJobs'), orderBy('createdAt', 'desc')), (snapshot) => callback(snapshot.docs.map((entry) => ({ id: entry.id, ...entry.data() })))) }
-export async function startBihrSync() {
+export async function startBihrSync({ forceFull = false } = {}) {
   requireFirebase()
   const sync = httpsCallable(functions, 'startBihrCatalogSync', { timeout: 30 * 60 * 1000 })
-  return (await sync()).data
+  return (await sync({ forceFull })).data
 }
 export function watchBihrSyncJobs(callback) { requireFirebase(); return onSnapshot(query(collection(db, 'bihrSyncJobs'), orderBy('createdAt', 'desc'), limit(10)), (snapshot) => callback(snapshot.docs.map((entry) => ({ id: entry.id, ...entry.data() })))) }

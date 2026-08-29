@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "grant-admin": "node scripts/grant-admin.mjs",
-    "test": "node --test bihr.test.mjs"
+    "test": "node --test *.test.mjs"
   },
   "dependencies": {
     "adm-zip": "^0.5.18",

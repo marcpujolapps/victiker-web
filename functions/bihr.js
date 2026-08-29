@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip'
 import { parse as parseCsv } from 'csv-parse/sync'
 import * as XLSX from 'xlsx'
+import { createHash } from 'node:crypto'
 
 const DEFAULT_API_BASE_URL = 'https://api.bihr.net/api/v2.1'
 const CATALOG_POLL_INTERVAL_MS = 5000
@@ -90,6 +91,94 @@ export function toBihrCatalogItem(row, { syncId, serverTimestamp }) {
       syncedAt: serverTimestamp,
     },
   }
+}
+
+// The catalog download contains no incremental endpoint or stable revision that
+// can be used by clients.  These pure helpers make the downloaded full catalog
+// cheap to compare with the previous successful snapshot.
+export function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(',')}}`
+  return JSON.stringify(value)
+}
+
+export function bihrProductHash(item) {
+  const { updatedAt, updatedBy, createdAt, createdBy, bihr, ...fields } = item
+  // bihr.syncId and bihr.syncedAt are operational metadata, never catalog data.
+  const { syncId, syncedAt, ...bihrFields } = bihr || {}
+  return createHash('sha256').update(stableJson({ ...fields, bihr: bihrFields })).digest('hex')
+}
+
+export function bihrTaxonomyHash({ id, name }) {
+  return createHash('sha256').update(stableJson({ id, name, vehicleType: 'moto', parentId: null, active: true, source: 'bihr' })).digest('hex')
+}
+
+export function buildBihrSyncPlan(rows, { syncId, manifest = null, serverTimestamp }) {
+  const previous = manifest?.products || {}
+  const nextProducts = {}
+  const products = []
+  const categories = new Map()
+  let images = 0
+  let rejected = 0
+
+  for (const row of rows) {
+    try {
+      const item = toBihrCatalogItem(row, { syncId, serverTimestamp })
+      const documentId = item.referenceNormalized || `bihr-${Buffer.from(item.reference).toString('base64url')}`
+      if (nextProducts[item.referenceNormalized]) throw new Error(`Referencia duplicada: ${item.reference}`)
+      const hash = bihrProductHash(item)
+      nextProducts[item.referenceNormalized] = { hash, documentId }
+      products.push({ item, hash, documentId, previous: previous[item.referenceNormalized] || null })
+      if (item.imageUrl) images += 1
+      if (item.categoryId && item.sourceCategory) categories.set(item.categoryId, item.sourceCategory)
+    } catch {
+      rejected += 1
+    }
+  }
+
+  const newProducts = products.filter((entry) => !entry.previous)
+  const modifiedProducts = products.filter((entry) => entry.previous && entry.previous.hash !== entry.hash)
+  const unchangedProducts = products.filter((entry) => entry.previous && entry.previous.hash === entry.hash)
+  const removedProducts = Object.entries(previous)
+    .filter(([reference]) => !nextProducts[reference])
+    .map(([reference, entry]) => ({ reference, ...entry }))
+  const taxonomy = Object.fromEntries([...categories].map(([id, name]) => [id, { name, hash: bihrTaxonomyHash({ id, name }) }]))
+  const changedTaxonomies = Object.entries(taxonomy).filter(([id, entry]) => manifest?.taxonomies?.[id]?.hash !== entry.hash)
+
+  return {
+    products, newProducts, modifiedProducts, unchangedProducts, removedProducts,
+    images, rejected, taxonomy, changedTaxonomies,
+    manifest: { schemaVersion: 1, catalog: 'EssentialHardPart', products: nextProducts, taxonomies: taxonomy },
+  }
+}
+
+export function bihrProductWrites(plan, { forceFull = false, initialManifest = false } = {}) {
+  return forceFull || initialManifest ? plan.products : [...plan.newProducts, ...plan.modifiedProducts]
+}
+
+export function canArchiveBihrPlan(plan, previousManifest, { minRows = 1000, maxRemovalRatio = 0.2 } = {}) {
+  if (plan.rejected || plan.products.length < minRows) return false
+  const previousCount = Object.keys(previousManifest?.products || {}).length
+  return !previousCount || plan.removedProducts.length / previousCount <= maxRemovalRatio
+}
+
+export async function runWithConcurrency(items, concurrency, worker) {
+  if (!Number.isInteger(concurrency) || concurrency < 1) throw new Error('La concurrencia debe ser un entero positivo.')
+  let nextIndex = 0
+  let failure = null
+  const runners = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+    while (!failure && nextIndex < items.length) {
+      const index = nextIndex
+      nextIndex += 1
+      try {
+        await worker(items[index], index)
+      } catch (error) {
+        failure ||= error
+      }
+    }
+  })
+  await Promise.all(runners)
+  if (failure) throw failure
 }
 
 export function extractCatalogRows(zipBuffer) {

@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle, Minus, Plus, ShoppingBag, X } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { createRequest } from '../lib/requests'
 const money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
 
 export function RequestDrawer({ cart, updateQuantity, isOpen, onClose, navigate }) {
@@ -13,6 +14,7 @@ export function RequestDrawer({ cart, updateQuantity, isOpen, onClose, navigate 
     setError('')
     const form = new FormData(event.currentTarget)
     try {
+      await createRequest({ type: 'parts', name: form.get('name'), phone: form.get('phone'), vehicle: form.get('vehicle'), items: cart.map(({ id, reference, title, description, price, currency, brand, quantity }) => ({ id, reference, title, description: description || title, price: Number(price) || 0, currency: currency || 'EUR', brand: brand || '', quantity })) })
       const response = await fetch('/api/requests', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'parts', name: form.get('name'), phone: form.get('phone'), vehicle: form.get('vehicle'), items: cart }) })
       if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'No s’ha pogut enviar la sol·licitud.')
       setSent(true)

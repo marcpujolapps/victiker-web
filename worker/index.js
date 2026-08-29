@@ -101,16 +101,22 @@ function partsEmail({ name, phone, vehicle, items }) {
     ["Piezas solicitadas", `${totalUnits} unidad${totalUnits === 1 ? "" : "es"}`],
   ];
   const itemRows = items.map((item) => `<tr>
-    <td style="padding:14px 16px;border-bottom:1px solid #e5e9ef;color:#12233f;font-weight:700;">${escapeHtml(item.title)}</td>
-    <td style="padding:14px 16px;border-bottom:1px solid #e5e9ef;color:#526174;font-size:13px;">${escapeHtml(item.reference)}</td>
-    <td align="center" style="padding:14px 16px;border-bottom:1px solid #e5e9ef;color:#12233f;font-weight:700;">${item.quantity}</td>
+    <td valign="top" style="padding:14px 16px;border-bottom:1px solid #e5e9ef;color:#12233f;"><strong style="display:block;">${escapeHtml(item.description)}</strong><span style="display:block;margin-top:5px;color:#526174;font-size:13px;">${escapeHtml(item.reference)}</span>${item.brand ? `<span style="display:block;margin-top:4px;color:#526174;font-size:12px;">Marca: ${escapeHtml(item.brand)}</span>` : ""}</td>
+    <td valign="top" align="right" style="padding:14px 16px;border-bottom:1px solid #e5e9ef;color:#12233f;font-size:13px;white-space:nowrap;">${escapeHtml(item.priceLabel)}<br><strong style="display:inline-block;margin-top:6px;">${item.quantity} ud.</strong></td>
   </tr>`).join("");
+  const textItems = items.map((item) => [
+    `- ${item.description} (${item.reference})`,
+    `  Descripción: ${item.description}`,
+    item.brand ? `  Marca: ${item.brand}` : null,
+    `  Precio orientativo: ${item.priceLabel}`,
+    `  Unidades: ${item.quantity}`,
+  ].filter(Boolean).join("\n")).join("\n\n");
   return emailLayout({
     title: "Nueva solicitud de piezas",
     eyebrow: "VICTIKER · RECAMBIOS",
     intro: "Hay una nueva selección de piezas pendiente de revisar.",
-    content: `${detailTable(details)}<div style="margin-top:28px;"><p style="margin:0 0 10px;color:#12233f;font-size:15px;font-weight:800;">Piezas seleccionadas</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e5e9ef;border-collapse:separate;border-spacing:0;"><thead><tr style="background:#f4f7fa;"><th align="left" style="padding:11px 16px;color:#526174;font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Pieza</th><th align="left" style="padding:11px 16px;color:#526174;font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Referencia</th><th style="padding:11px 16px;color:#526174;font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Unidades</th></tr></thead><tbody>${itemRows}</tbody></table></div>`,
-    text: `NUEVA SOLICITUD DE PIEZAS\n\n${details.map(([label, value]) => `${label}: ${value}`).join("\n")}\n\nPIEZAS\n${items.map((item) => `- ${item.title} (${item.reference}): ${item.quantity} ud.`).join("\n")}`,
+    content: `${detailTable(details)}<div style="margin-top:28px;"><p style="margin:0 0 10px;color:#12233f;font-size:15px;font-weight:800;">Piezas seleccionadas</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e5e9ef;border-collapse:separate;border-spacing:0;"><thead><tr style="background:#f4f7fa;"><th align="left" style="padding:11px 16px;color:#526174;font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Pieza y descripción</th><th align="right" style="padding:11px 16px;color:#526174;font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Precio / uds.</th></tr></thead><tbody>${itemRows}</tbody></table></div>`,
+    text: `NUEVA SOLICITUD DE PIEZAS\n\n${details.map(([label, value]) => `${label}: ${value}`).join("\n")}\n\nPIEZAS\n${textItems}`,
     items,
   });
 }
@@ -132,10 +138,32 @@ function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
   return items.slice(0, 50).flatMap((item) => {
     const title = cleanText(item?.title, 250);
+    const description = cleanText(item?.description || title, 1000);
     const reference = cleanText(item?.reference, 120);
     const quantity = Number.parseInt(item?.quantity, 10);
-    return title && reference && Number.isInteger(quantity) && quantity > 0 && quantity <= 1000 ? [{ title, reference, quantity }] : [];
+    const imageUrl = safeImageUrl(item?.imageUrl);
+    const price = Number(item?.price);
+    const brand = cleanText(item?.brand, 120);
+    return title && description && reference && Number.isInteger(quantity) && quantity > 0 && quantity <= 1000
+      ? [{ title, description, reference, quantity, imageUrl, brand, priceLabel: Number.isFinite(price) && price >= 0 ? formatPrice(price, item?.currency) : "Precio a confirmar" }]
+      : [];
   });
+}
+
+function safeImageUrl(value) {
+  const raw = cleanText(value, 2000);
+  if (!raw) return "";
+  try {
+    const url = new URL(raw);
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+function formatPrice(value, currency = "EUR") {
+  try { return new Intl.NumberFormat("es-ES", { style: "currency", currency: currency || "EUR" }).format(value); }
+  catch { return `${value} ${currency || "EUR"}`; }
 }
 
 function cleanText(value, maxLength) {

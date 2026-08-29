@@ -14,5 +14,33 @@ service cloud.firestore {
     match /importJobs/{job} { allow read: if admin(); allow create, update, delete: if admin(); }
     match /bihrSyncJobs/{job} { allow read: if admin(); allow write: if false; }
     match /integrations/{integration} { allow read: if admin(); allow write: if false; }
+    match /requests/{requestId} {
+      allow create: if validRequestCreate();
+      allow read: if admin();
+      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes', 'updatedAt']) && validRequestAdminUpdate();
+      allow delete: if false;
+    }
+
+    function validRequestCreate() {
+      return request.resource.data.keys().hasOnly(['type', 'name', 'phone', 'vehicle', 'need', 'details', 'items', 'status', 'notes', 'createdAt', 'updatedAt'])
+        && request.resource.data.type in ['parts', 'appointment']
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 120
+        && request.resource.data.phone is string && request.resource.data.phone.size() > 0 && request.resource.data.phone.size() <= 60
+        && (!('vehicle' in request.resource.data) || request.resource.data.vehicle is string && request.resource.data.vehicle.size() <= 300)
+        && (!('need' in request.resource.data) || request.resource.data.need is string && request.resource.data.need.size() <= 160)
+        && (!('details' in request.resource.data) || request.resource.data.details is string && request.resource.data.details.size() <= 2000)
+        && (!('items' in request.resource.data) || request.resource.data.items is list && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 50)
+        && request.resource.data.status == 'new'
+        && request.resource.data.notes == ''
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && ((request.resource.data.type == 'parts' && 'items' in request.resource.data) || (request.resource.data.type == 'appointment' && 'need' in request.resource.data));
+    }
+
+    function validRequestAdminUpdate() {
+      return request.resource.data.status in ['new', 'in_progress', 'completed', 'cancelled']
+        && request.resource.data.notes is string && request.resource.data.notes.size() <= 5000
+        && request.resource.data.updatedAt == request.time;
+    }
   }
 }

@@ -93,6 +93,30 @@
 .admin-login .button { width:100%; margin-top:22px; border-radius:6px; padding:11px 15px; font-size:13px; }
 @media (max-width:820px) { .admin-shell { grid-template-columns:1fr; } .admin-sidebar { min-height:0; padding:14px 16px 10px; } .admin-brand { padding:2px 6px 14px; } .admin-nav-label { display:none; } .admin-sidebar nav { display:flex; overflow:auto; } .admin-sidebar nav button { width:auto; white-space:nowrap; } .admin-signout { margin:8px 0 0; padding:12px 6px 0; border-top:1px solid var(--admin-border); } .admin-content { padding:30px 18px 64px; } .admin-header { align-items:flex-start; flex-direction:column; margin-bottom:24px; } .admin-header .button { align-self:stretch; } .admin-toolbar,.taxonomy-form { grid-template-columns:1fr; } .admin-table { overflow:auto; } .admin-table__head,.admin-table article { min-width:820px; } }
 
+.request-tabs { display:flex; gap:8px; margin-bottom:18px; border-bottom:1px solid var(--admin-border); }
+.request-tabs button { border:0; border-bottom:2px solid transparent; background:transparent; color:#777d86; padding:12px 4px; font:inherit; font-size:13px; font-weight:700; }
+.request-tabs button.is-active { border-bottom-color:var(--orange); color:var(--blue-deep); }
+.request-workspace { display:grid; grid-template-columns:310px minmax(0,1fr); gap:18px; min-height:500px; }
+.request-list { display:grid; align-content:start; border:1px solid var(--admin-border); border-radius:8px; overflow:hidden; background:#fff; }
+.request-list button { display:grid; gap:5px; border:0; border-bottom:1px solid var(--admin-border); background:#fff; color:var(--blue-deep); padding:16px; text-align:left; }
+.request-list button:last-child { border-bottom:0; }
+.request-list button:hover,.request-list button.is-selected { background:#f3f6fa; }
+.request-list span,.request-list small { color:#737b87; font-size:12px; }
+.request-detail { border:1px solid var(--admin-border); border-radius:8px; background:#fff; padding:24px; }
+.request-detail--empty { display:grid; place-items:center; align-content:center; gap:12px; color:#98a0aa; text-align:center; }
+.request-detail header { display:flex; align-items:start; justify-content:space-between; gap:20px; padding-bottom:18px; border-bottom:1px solid var(--admin-border); }
+.request-detail h2 { margin:5px 0 0; color:var(--blue-deep); font-size:27px; letter-spacing:-.04em; }
+.request-detail__eyebrow { color:var(--orange); font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.request-detail dl { display:grid; grid-template-columns:145px 1fr; gap:0; margin:0; }
+.request-detail dt,.request-detail dd { margin:0; padding:13px 0; border-bottom:1px solid var(--admin-border); font-size:13px; }
+.request-detail dt { color:#7a828c; }
+.request-detail dd { color:#30343a; white-space:pre-wrap; }
+.request-notes { display:grid; gap:8px; margin-top:22px; color:var(--blue-deep); font-size:13px; font-weight:700; }
+.request-notes textarea { min-height:130px; border:1px solid #ccd2da; border-radius:5px; padding:12px; resize:vertical; font:inherit; font-weight:400; }
+.request-detail footer { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; }
+.request-detail footer select { border:1px solid #ccd2da; border-radius:5px; padding:0 10px; background:#fff; color:#30343a; }
+@media (max-width:820px) { .request-workspace { grid-template-columns:1fr; } .request-list { max-height:300px; overflow:auto; } .request-detail dl { grid-template-columns:110px 1fr; } }
+
 /* Catálogo Bihr: las imágenes se sirven desde el CDN remoto. */
 .catalog-table__head,.catalog-table article { grid-template-columns:72px 1.05fr 2.2fr 1fr .8fr 38px; }
 .catalog-table article { min-height:98px; }

@@ -75,6 +75,43 @@ test("keeps email requests out of the static asset handler", async () => {
   assert.equal(assetCalls, 0);
 });
 
+test("includes catalog descriptions and excludes photos from parts emails", async () => {
+  const originalFetch = globalThis.fetch;
+  let emailPayload;
+  globalThis.fetch = async (_url, options) => {
+    emailPayload = JSON.parse(options.body);
+    return new Response(JSON.stringify({ id: "sample-email" }), { status: 200 });
+  };
+
+  try {
+    const response = await worker.fetch(new Request("https://example.test/api/requests", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "parts",
+        name: "Marc",
+        phone: "600 000 000",
+        items: [{
+          title: "Pastillas de freno",
+          description: "Pastillas sinterizadas para uso urbano",
+          reference: "VKT-FR-001",
+          quantity: 2,
+          price: 42.9,
+          imageUrl: "https://example.test/brake-pads.jpg",
+        }],
+      }),
+    }), { RESEND_API_KEY: "test-key", RESEND_FROM_EMAIL: "Victiker <test@example.test>", ASSETS: { fetch: async () => new Response("asset") } });
+
+    assert.equal(response.status, 200);
+    assert.match(emailPayload.html, /Pastillas sinterizadas para uso urbano/);
+    assert.ok(!emailPayload.html.includes("<img"));
+    assert.ok(!emailPayload.html.includes("https://example.test/brake-pads.jpg"));
+    assert.ok(!emailPayload.text.includes("Foto:"));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("emits the files required by Sites packaging", async () => {
   await access(new URL("../dist/client/index.html", import.meta.url));
   await access(new URL("../dist/server/index.js", import.meta.url));

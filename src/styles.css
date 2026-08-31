@@ -239,6 +239,8 @@
   color:var(--admin-text);
 }
 .admin-sidebar { padding:27px 14px 17px; background:var(--admin-sidebar); }
+.admin-sidebar .admin-brand { display:block; width:100%; }
+.admin-sidebar .admin-brand img { display:block; width:150px; max-width:100%; height:auto; }
 .admin-brand { padding:8px 12px 26px; }
 .admin-nav-label { margin:14px 12px 9px; color:#a0a4ab; font-size:10px; letter-spacing:.12em; }
 .admin-sidebar nav { gap:1px; }
@@ -298,6 +300,7 @@
 @media (max-width:600px) {
   .admin-sidebar { padding:16px 16px 11px; }
   .admin-brand { padding:2px 6px 14px; }
+  .admin-sidebar .admin-brand { max-width:112px; }
   .import-card__header { padding:21px 18px 17px; }
   .boat-import-form,.import-card__actions,.import-card .import-jobs { padding-left:18px; padding-right:18px; }
 }

@@ -4,9 +4,9 @@ import { getStorage } from 'firebase-admin/storage'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { onSchedule } from 'firebase-functions/v2/scheduler'
 import { onObjectFinalized } from 'firebase-functions/v2/storage'
-import * as XLSX from 'xlsx'
 import { gzipSync, gunzipSync } from 'node:zlib'
 import { BihrClient, bihrProductWrites, buildBihrSyncPlan, canArchiveBihrPlan, extractCatalogRows, runWithConcurrency } from './bihr.js'
+import { parseCatalogNumber, readCatalogRows } from './catalog-csv.js'
 
 initializeApp()
 const db = getFirestore()
@@ -48,7 +48,7 @@ export const processCatalogImport = onObjectFinalized({
   await job.update({ status: 'processing', storagePath: object.name, startedAt: FieldValue.serverTimestamp() })
   try {
     const [buffer] = await getStorage().bucket(object.bucket).file(object.name).download()
-    const rows = readRows(buffer, object.name)
+    const rows = readCatalogRows(buffer)
     const result = await importRows(rows, jobSnapshot.data().createdBy, job, { vehicleType: 'barco' })
     await job.update({ status: 'completed', ...result, finishedAt: FieldValue.serverTimestamp() })
   } catch (error) {
@@ -56,16 +56,6 @@ export const processCatalogImport = onObjectFinalized({
     await job.update({ status: 'failed', error: error.message || 'No se ha podido procesar el archivo.', finishedAt: FieldValue.serverTimestamp() })
   }
 })
-
-function readRows(buffer, fileName) {
-  // Los CSV exportados en UTF-8 suelen llegar sin BOM; indicar el codepage
-  // evita que encabezados como "Descripción" se lean como "DescripciÃ³n".
-  const workbook = XLSX.read(buffer, { type: 'buffer', raw: false, codepage: 65001 })
-  const sheet = workbook.Sheets[workbook.SheetNames[0]]
-  const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
-  if (!rows.length) throw new Error('El archivo no contiene filas.')
-  return rows
-}
 
 async function importRows(rows, uid, job, { vehicleType = 'barco' } = {}) {
   // CSV files often arrive ordered by reference. Keep BulkWriter throttled so
@@ -105,8 +95,8 @@ function toCatalogItem(row, uid, vehicleType) {
   const description = String(value(['Descripción', 'Descripcion', 'description']) || reference).trim()
   const rawPrice = value(['Precio', 'price'])
   const rawDiscount = value(['Descuento', 'discount'])
-  const price = rawPrice === undefined || String(rawPrice).trim() === '' ? 0 : parseNumber(rawPrice)
-  const discount = rawDiscount === undefined || String(rawDiscount).trim() === '' ? 0 : parseNumber(rawDiscount)
+  const price = rawPrice === undefined || String(rawPrice).trim() === '' ? 0 : parseCatalogNumber(rawPrice)
+  const discount = rawDiscount === undefined || String(rawDiscount).trim() === '' ? 0 : parseCatalogNumber(rawDiscount)
   if (!reference) throw new Error('La referencia es obligatoria.')
   if (!Number.isFinite(price) || price < 0) throw new Error('Precio inválido.')
   if (!Number.isFinite(discount) || discount < 0 || discount > 100) throw new Error('Descuento inválido.')
@@ -122,7 +112,6 @@ function toCatalogItem(row, uid, vehicleType) {
     status: 'active', source: 'manual-csv', updatedAt: FieldValue.serverTimestamp(), updatedBy: uid,
   }
 }
-function parseNumber(value) { return Number(String(value).replace(/[^0-9,.-]/g, '').replace(/\.(?=\d{3}(?:\D|$))/g, '').replace(',', '.')) }
 function normalize(value = '') { return String(value).trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim() }
 function searchPrefixes(...values) { const prefixes = new Set(); values.map(normalize).filter(Boolean).forEach((value) => value.split(' ').forEach((word) => { for (let size = 2; size <= Math.min(word.length, 32); size += 1) prefixes.add(word.slice(0, size)) })); return [...prefixes] }
 

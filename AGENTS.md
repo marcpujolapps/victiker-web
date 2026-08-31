@@ -12,6 +12,8 @@ Mobile/header contrast preference: avoid navy-on-navy branding; use a light, coo
 
 Solicitud de repuestos: mientras haya piezas, mantén una barra fija y discreta en el catálogo con acceso claro a revisar y enviar la solicitud. Tras añadir, muestra únicamente una confirmación visual pequeña sobre el botón de la barra durante tres segundos.
 
+Admin console preference: use a restrained, premium product-console language inspired by Vercel/OpenAI. Avoid prominent colored top borders, overly rounded card treatments, decorative color blocks, and other motifs that make the UI feel AI-generated; prefer neutral surfaces, thin borders, precise typography, black primary actions, and limited semantic accents.
+
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
 Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.

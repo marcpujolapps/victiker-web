@@ -27,7 +27,7 @@ function Login() {
   return <main className="admin-login"><form onSubmit={submit}><span className="admin-brand">VICTIKER</span><h1>Administración</h1><p>Accede para gestionar el catálogo.</p><label>Email<input required name="email" type="email" autoComplete="email" /></label><label>Contraseña<input required name="password" type="password" autoComplete="current-password" /></label>{error && <p className="form-error">{error}</p>}<button className="button" disabled={pending}>{pending ? 'Entrando…' : 'Entrar'}</button></form></main>
 }
 
-function AdminNotice({ title, text, onLogout }) { return <main className="admin-login"><div><span className="admin-brand">VICTIKER</span><h1>{title}</h1>{text && <p>{text}</p>}{onLogout && <button className="button button--dark" onClick={onLogout}>Cerrar sesión</button>}</div></main> }
+function AdminNotice({ title, text, onLogout }) { return <main className="admin-login"><div><img className="admin-notice-logo" src="/assets/victiker-logo-header.png" alt="Victiker" /><h1>{title}</h1>{text && <p>{text}</p>}{onLogout && <button className="button button--dark" onClick={onLogout}>Cerrar sesión</button>}</div></main> }
 
 function AdminDashboard({ navigate, user }) {
   const [section, setSection] = useState('catalog'); const [items, setItems] = useState([]); const [cursor, setCursor] = useState(null); const [history, setHistory] = useState([])

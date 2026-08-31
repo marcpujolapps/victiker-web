@@ -85,6 +85,7 @@
 .admin-editor footer .button--ghost { border-color:#d8dce2; color:#525862; background:white; }
 .admin-login { min-height:100vh; display:grid; place-items:center; padding:24px; background:#f7f8fa; }
 .admin-login form,.admin-login > div { width:min(380px,100%); padding:36px; border:1px solid var(--admin-border); border-radius:9px; background:white; box-shadow:0 12px 35px rgba(17,24,39,.06); }
+.admin-login .admin-notice-logo { display:block; width:150px; max-width:100%; height:auto; margin-bottom:38px; }
 .admin-login .admin-brand { padding:0; margin-bottom:38px; }
 .admin-login h1 { margin:0; color:#17181a; font-size:26px; letter-spacing:-.05em; }
 .admin-login p { color:var(--admin-subtle); font-size:13px; line-height:1.5; }

@@ -17,7 +17,7 @@ service cloud.firestore {
     match /requests/{requestId} {
       allow create: if validRequestCreate();
       allow read: if admin();
-      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes', 'updatedAt']) && validRequestAdminUpdate();
+      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notes', 'updatedAt']) && validRequestAdminUpdate();
       allow delete: if false;
     }
 
@@ -38,8 +38,7 @@ service cloud.firestore {
     }
 
     function validRequestAdminUpdate() {
-      return request.resource.data.status in ['new', 'in_progress', 'completed', 'cancelled']
-        && request.resource.data.notes is string && request.resource.data.notes.size() <= 5000
+      return request.resource.data.notes is string && request.resource.data.notes.size() <= 5000
         && request.resource.data.updatedAt == request.time;
     }
   }

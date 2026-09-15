@@ -11,7 +11,7 @@ export function watchRequests(type, callback) {
   return onSnapshot(query(collection(db, 'requests'), where('type', '==', type), orderBy('createdAt', 'desc')), (snapshot) => callback(snapshot.docs.map((entry) => ({ id: entry.id, ...entry.data() }))), (error) => callback([], error))
 }
 
-export async function updateRequest(id, changes) {
+export async function updateRequest(id, notes) {
   requireFirebase()
-  return updateDoc(doc(db, 'requests', id), { ...changes, updatedAt: serverTimestamp() })
+  return updateDoc(doc(db, 'requests', id), { notes, updatedAt: serverTimestamp() })
 }

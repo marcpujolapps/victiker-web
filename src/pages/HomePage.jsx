@@ -59,7 +59,16 @@ export function HomePage({ navigate }) {
       <img className="hero-brand-mobile" src="/assets/victiker-logo.png" alt="Victiker: taller especializado, piezas, reparación de motos y motores de barco" />
       <div className="hero-content"><h1>Tu taller,<br />donde lo <em>necesitas.</em></h1><p>Reparación, mantenimiento y diagnosis para motos y embarcaciones.</p><div className="hero-actions"><button className="button" onClick={() => navigate('/contacto')}>Pedir cita <ArrowRight size={19} /></button><button className="button button--ghost" onClick={() => navigate('/catalogo')}>Ver repuestos</button></div></div>
     </section>
-    <section className="choice-section" aria-label="Elige tu servicio"><button className="choice-card" onClick={() => navigate('/catalogo?tipo=moto')}><Motorcycle size={33} weight="thin" /><strong>Moto</strong><small>Diagnosis, mantenimiento y reparación con atención donde estés.</small><ArrowRight size={25} /></button><button className="choice-card choice-card--boat" onClick={() => navigate('/catalogo?tipo=nautica')}><Boat size={33} weight="thin" /><strong>Embarcación</strong><small>Motor, electricidad y puesta a punto para disfrutar sin imprevistos.</small><ArrowRight size={25} /></button></section>
+    <section className="choice-section" aria-label="Nuestras especialidades">
+      <article className="choice-card">
+        <Motorcycle size={40} weight="thin" aria-hidden="true" />
+        <div><p className="choice-card__eyebrow">Sobre dos ruedas</p><h2>Moto</h2><p className="choice-card__description">Diagnosis, mantenimiento y reparación con atención donde estés.</p></div>
+      </article>
+      <article className="choice-card choice-card--boat">
+        <Boat size={40} weight="thin" aria-hidden="true" />
+        <div><p className="choice-card__eyebrow">En el agua</p><h2>Embarcación</h2><p className="choice-card__description">Motor, electricidad y puesta a punto para disfrutar sin imprevistos.</p></div>
+      </article>
+    </section>
     <section className="preview-section"><div><p className="section-eyebrow">Servicios Victiker</p><h2>El cuidado técnico<br />que te sigue el ritmo.</h2></div><div className="service-preview">{services.map(([Icon, title, copy]) => <article key={title}><Icon size={28} weight="thin" /><h3>{title}</h3><p>{copy}</p></article>)}</div><button className="text-link" onClick={() => navigate('/servicios')}>Conocer todos los servicios <ArrowRight size={19} /></button></section>
     <section className="mobile-banner"><div><p className="section-eyebrow">Taller móvil</p><h2>Nos movemos para que tú no tengas que hacerlo.</h2></div><button className="button button--ghost" onClick={() => navigate('/taller-movil')}>Cómo trabajamos <ArrowRight size={19} /></button></section>
   </>

@@ -21,3 +21,5 @@ When implementing from a selected generated mock, treat that image as the source
 Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.
 
 Landing specialties: Moto and Embarcación are static informational blocks, with no click navigation, arrows, or button hover effects because they have no detail pages.
+
+Admin navigation: keep Cerrar sesión visible at the bottom of the desktop sidebar, independently of the content length.

@@ -304,3 +304,12 @@
   .import-card__header { padding:21px 18px 17px; }
   .boat-import-form,.import-card__actions,.import-card .import-jobs { padding-left:18px; padding-right:18px; }
 }
+
+/* Keep account actions visible independently of the catalog length. */
+@media (min-width:821px) {
+  .admin-sidebar { position:sticky; top:0; height:100dvh; min-height:0; align-self:start; }
+  .admin-sidebar nav { min-height:0; overflow-y:auto; }
+  .admin-signout { flex-shrink:0; margin-top:auto; border-top:1px solid var(--admin-border); border-radius:0; padding-top:16px; }
+}
+.admin-signout:focus-visible { outline:2px solid var(--admin-text); outline-offset:2px; }
+.admin-signout:disabled { opacity:.6; cursor:wait; }

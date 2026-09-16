@@ -1,5 +1,6 @@
 import { List, ShoppingBag, X } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { WhatsAppLink } from './WhatsAppLink'
 
 const links = [
   ['/servicios', 'Servicios'],
@@ -19,6 +20,7 @@ export function SiteHeader({ path, itemCount, navigate, openRequest }) {
       {links.map(([to, label]) => <button className={path === to ? 'is-current' : ''} onClick={() => goTo(to)} key={to}>{label}</button>)}
     </nav>
     <div className="header-actions">
+      <WhatsAppLink />
       <button className="cart-button" onClick={openRequest} aria-label={`Abrir solicitud: ${itemCount} repuestos`}><ShoppingBag size={22} />{itemCount > 0 && <span>{itemCount}</span>}</button>
       <button className="button button--small" onClick={() => goTo('/contacto')}>Pedir cita</button>
       <button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="Abrir menú">{menuOpen ? <X size={25} /> : <List size={27} />}</button>

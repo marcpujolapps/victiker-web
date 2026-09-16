@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { RequestDrawer } from './components/RequestDrawer'
 import { SiteFooter } from './components/SiteFooter'
 import { SiteHeader } from './components/SiteHeader'
+import { WhatsAppLink } from './components/WhatsAppLink'
 import { CatalogPage } from './pages/CatalogPage'
 import { ContactPage } from './pages/ContactPage'
 import { HomePage } from './pages/HomePage'
@@ -133,6 +134,7 @@ export function App() {
         <Page navigate={navigate} addToCart={addToCart} cart={cart} itemCount={itemCount} openRequest={() => setCartOpen(true)} />
       </main>
       <SiteFooter navigate={navigate} />
+      <WhatsAppLink floating raised={path === '/catalogo' && itemCount > 0} />
       <RequestDrawer cart={cart} updateQuantity={updateQuantity} isOpen={cartOpen} onClose={() => setCartOpen(false)} navigate={navigate} />
       {lastAdded && <div className="request-feedback" role="status" aria-live="polite">
         <CheckCircle size={18} weight="fill" />

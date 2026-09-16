@@ -23,3 +23,5 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 Landing specialties: Moto and Embarcación are static informational blocks, with no click navigation, arrows, or button hover effects because they have no detail pages.
 
 Admin navigation: keep Cerrar sesión visible at the bottom of the desktop sidebar, independently of the content length.
+
+WhatsApp: mantener un icono azul sin fondo en la cabecera junto al carrito y Pedir cita, y un acceso circular flotante abajo a la derecha en las páginas públicas, sin tapar la barra de solicitud de repuestos.

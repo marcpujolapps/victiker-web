@@ -14,12 +14,13 @@ export function watchAdmin(callback) {
 }
 export async function login(email, password) { requireFirebase(); return signInWithEmailAndPassword(auth, email, password) }
 export async function logout() { requireFirebase(); return signOut(auth) }
-export async function startImport(file, onProgress = () => {}) {
+export async function startImport(file, vehicleType, onProgress = () => {}) {
   requireFirebase()
   const extension = file.name.split('.').pop().toLowerCase()
   if (extension !== 'csv') throw new Error('Selecciona un archivo CSV.')
+  if (!['moto', 'barco'].includes(vehicleType)) throw new Error('Selecciona moto o barco para esta importación.')
   const create = httpsCallable(functions, 'startCatalogImport')
-  const response = await create({ fileName: file.name, contentType: file.type || 'application/octet-stream' })
+  const response = await create({ fileName: file.name, vehicleType, contentType: file.type || 'application/octet-stream' })
   const { importId, path } = response.data
   const upload = uploadBytesResumable(ref(storage, path), file, { contentType: file.type, customMetadata: { importId } })
   return new Promise((resolve, reject) => upload.on('state_changed', (snap) => onProgress(Math.round(snap.bytesTransferred / snap.totalBytes * 100)), reject, () => resolve({ importId, progress: 100 })))

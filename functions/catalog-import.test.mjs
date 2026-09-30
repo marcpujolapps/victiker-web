@@ -7,10 +7,18 @@ test('el CSV de muestra usa exactamente las columnas aceptadas para barco', asyn
   const buffer = await readFile(new URL('../public/muestra-catalogo-barco.csv', import.meta.url))
   const rows = readCatalogRows(buffer)
 
-  assert.deepEqual(Object.keys(rows[0]), ['Referencia', 'Descripción', 'Precio', 'Descuento', 'Categoría', 'Subcategoría'])
+  assert.deepEqual(Object.keys(rows[0]), ['Referencia', 'Descripción', 'Precio', 'Descuento', 'Categoría', 'Subcategoría', 'Marca', 'Referencia proveedor', 'Referencia sustituta', 'Código de barras', 'Múltiplo de venta', 'Categoría de origen', 'Imagen URL'])
   assert.equal(rows.length, 2)
   assert.equal(rows[0].Referencia, 'BAR-0001')
   assert.equal(rows[0].Categoría, 'Motor y propulsión')
+})
+
+test('la plantilla compartida sirve para moto y barco', async () => {
+  const buffer = await readFile(new URL('../public/muestra-catalogo.csv', import.meta.url))
+  const rows = readCatalogRows(buffer)
+  assert.deepEqual(Object.keys(rows[0]), ['Referencia', 'Descripción', 'Precio', 'Descuento', 'Categoría', 'Subcategoría', 'Marca', 'Referencia proveedor', 'Referencia sustituta', 'Código de barras', 'Múltiplo de venta', 'Categoría de origen', 'Imagen URL'])
+  assert.equal(rows[0].Referencia, 'PIEZA-0001')
+  assert.equal(rows[0]['Código de barras'], '0843000000001')
 })
 
 test('conserva la coma decimal del CSV antes de convertir el precio', async () => {

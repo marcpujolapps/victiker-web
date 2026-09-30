@@ -43,9 +43,9 @@ Después se despliegan las Functions y la configuración de Firestore:
 npx -y firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes --project victiker-taller
 ```
 
-La tarea automática se ejecuta cada lunes a las 05:30, hora de Madrid. Un administrador también puede iniciarla en **Administración → Importaciones → Motos · Catálogo Bihr** y consultar allí el resultado y el progreso más recientes.
+La tarea automática se ejecuta cada lunes a las 05:30, hora de Madrid. El estado y el progreso más recientes se consultan en **Administración → Importaciones → Catálogo Bihr**.
 
-La importación manual de barco acepta CSV con las columnas `Referencia`, `Descripción`, `Precio`, `Descuento`, `Categoría` y `Subcategoría`. Solo `Referencia` es obligatoria; el tipo se fija a `barco` y las taxonomías se crean automáticamente a partir de las dos últimas columnas. El panel permite descargar `public/muestra-catalogo-barco.csv` como plantilla exacta.
+La importación manual acepta CSV para moto o barco, seleccionando el tipo de vehículo antes de subir el archivo. Las columnas son `Referencia`, `Descripción`, `Precio`, `Descuento`, `Categoría`, `Subcategoría`, `Marca`, `Referencia proveedor`, `Referencia sustituta`, `Código de barras`, `Múltiplo de venta`, `Categoría de origen` e `Imagen URL`. Solo `Referencia` es obligatoria. Los campos de proveedor e imagen son opcionales y, si se dejan vacíos en una nueva importación, se conservan los valores que ya tenía el producto. Las taxonomías se crean automáticamente a partir de `Categoría` y `Subcategoría`. El panel permite descargar `public/muestra-catalogo.csv` como plantilla; los archivos con las seis columnas antiguas siguen siendo válidos. Si una referencia ya pertenece a Bihr o a otro tipo de vehículo, esa fila se rechaza sin sobrescribir el producto existente. El stock de Bihr solo se muestra en referencias sincronizadas con Bihr.
 
 ## Verificación local
 

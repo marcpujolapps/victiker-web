@@ -4,6 +4,9 @@
       { "fieldPath": "type", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }
     ] },
     { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
     ] },
     { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
@@ -17,6 +20,45 @@
     ] },
     { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "referenceNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "price", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "price", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "price", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "price", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "descriptionNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "descriptionNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "price", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "price", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "price", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "price", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "descriptionNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalog", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "vehicleType", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "descriptionNormalized", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "catalogEmbeddings", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "embedding", "vectorConfig": { "dimension": 1536, "flat": {} } }
     ] }
   ],
   "fieldOverrides": []

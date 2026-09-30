@@ -6,5 +6,13 @@ service firebase.storage {
       allow read: if admin();
       allow write: if admin() && request.auth.uid == uid && request.resource.size < 25 * 1024 * 1024 && request.resource.contentType.matches('text/csv|application/vnd.ms-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
+    match /catalog-images/{uid}/{fileName} {
+      allow read: if true;
+      allow create: if admin() && request.auth.uid == uid
+        && fileName.matches('[A-Za-z0-9-]+\\.webp')
+        && request.resource.size > 0 && request.resource.size <= 900 * 1024
+        && request.resource.contentType == 'image/webp';
+      allow delete: if admin();
+    }
   }
 }

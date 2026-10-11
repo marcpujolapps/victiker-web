@@ -1,9 +1,9 @@
-import { Archive, ArrowLeft, ArrowSquareOut, CalendarBlank, CaretLeft, CaretRight, ChatText, CloudArrowDown, DownloadSimple, Package, PencilSimple, Plus, SignOut, SquaresFour, Trash, UploadSimple, X } from '@phosphor-icons/react'
+import { Archive, ArrowLeft, ArrowSquareOut, CalendarBlank, CaretLeft, CaretRight, ChatText, CloudArrowDown, DownloadSimple, Eye, EyeSlash, Package, PencilSimple, Plus, SignOut, SquaresFour, Trash, UploadSimple, X } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 import { archiveCatalogItem, catalogPayload, getCatalogItem, getCatalogPage, getTaxonomies, normalize, removeCatalogItem, restoreCatalogItem, saveCatalogItem, saveTaxonomy, VEHICLE_TYPES } from '../lib/catalog'
 import { optimizeCatalogImage, removeCatalogImage, uploadCatalogImage, validateCatalogImage } from '../lib/catalogImages'
 import { firebaseConfigured } from '../lib/firebase'
-import { login, logout, startImport, watchAdmin, watchBihrSyncJobs, watchImportJobs } from '../lib/admin'
+import { login, logout, resetPassword, startImport, watchAdmin, watchBihrSyncJobs, watchImportJobs } from '../lib/admin'
 import { updateRequest, watchRequests } from '../lib/requests'
 
 const emptyItem = { reference: '', description: '', price: '', discount: 0, vehicleType: 'moto', categoryId: '', subcategoryId: '', status: 'active', brand: '', supplierReference: '', barcode: '', sourceCategory: '', replacementReference: '', salesMultiple: 1, imageUrl: '' }
@@ -23,9 +23,75 @@ export function AdminPage({ navigate, path }) {
 }
 
 function Login() {
-  const [error, setError] = useState(''); const [pending, setPending] = useState(false)
-  async function submit(event) { event.preventDefault(); setPending(true); setError(''); const form = new FormData(event.currentTarget); try { await login(form.get('email'), form.get('password')) } catch { setError('No se ha podido iniciar sesión. Revisa tus credenciales.') } finally { setPending(false) } }
-  return <main className="admin-login"><form onSubmit={submit}><span className="admin-brand">VICTIKER</span><h1>Administración</h1><p>Accede para gestionar el catálogo.</p><label>Email<input required name="email" type="email" autoComplete="email" /></label><label>Contraseña<input required name="password" type="password" autoComplete="current-password" /></label>{error && <p className="form-error">{error}</p>}<button className="button" disabled={pending}>{pending ? 'Entrando…' : 'Entrar'}</button></form></main>
+  const [email, setEmail] = useState('')
+  const [recovering, setRecovering] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [pending, setPending] = useState(false)
+
+  function changeMode(next) {
+    setRecovering(next)
+    setSent(false)
+    setError('')
+    setShowPassword(false)
+  }
+
+  async function submit(event) {
+    event.preventDefault()
+    if (pending) return
+    const form = new FormData(event.currentTarget)
+    setPending(true)
+    setError('')
+    try {
+      if (recovering) {
+        await resetPassword(email)
+        setSent(true)
+      } else {
+        await login(email.trim(), form.get('password'))
+      }
+    } catch (error) {
+      if (recovering && error.code === 'auth/user-not-found') {
+        setSent(true)
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Demasiados intentos. Espera unos minutos y vuelve a intentarlo.')
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('No se ha podido conectar. Revisa tu conexión y vuelve a intentarlo.')
+      } else {
+        setError(recovering ? 'No se ha podido enviar el enlace. Inténtalo de nuevo.' : 'No se ha podido iniciar sesión. Revisa tu email y contraseña.')
+      }
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return <main className="admin-login admin-login--access">
+    <div className="login-layout">
+      <a className="login-logo" href="/" aria-label="Ir a la web de Victiker"><img src="/assets/victiker-logo-header.png" alt="Victiker" /></a>
+      <section className="login-card" aria-labelledby="login-title">
+        <header className="login-heading">
+          <h1 id="login-title">{sent ? 'Revisa tu correo' : recovering ? 'Recupera tu acceso' : 'Bienvenido de nuevo'}</h1>
+          {(sent || recovering) && <p>{sent ? 'Si el email está asociado a una cuenta, recibirás un enlace para crear una nueva contraseña.' : 'Introduce el email de tu cuenta y te enviaremos un enlace para restablecer tu contraseña.'}</p>}
+        </header>
+        {sent ? <div className="login-confirmation">
+          <p role="status">Solicitud enviada para <strong>{email.trim()}</strong>. Revisa también la carpeta de spam.</p>
+          <button className="button" onClick={() => changeMode(false)}>Volver a iniciar sesión</button>
+          <button className="login-text-button" onClick={() => changeMode(true)}>Usar otro email o volver a intentarlo</button>
+        </div> : <form onSubmit={submit} aria-busy={pending}>
+          <label htmlFor="login-email">Email</label>
+          <input id="login-email" required name="email" type="email" autoComplete="email" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} disabled={pending} autoCapitalize="none" spellCheck={false} />
+          {!recovering && <>
+            <div className="login-password-heading"><label htmlFor="login-password">Contraseña</label><button type="button" className="login-text-button" disabled={pending} onClick={() => changeMode(true)}>¿Has olvidado tu contraseña?</button></div>
+            <div className="login-password"><input id="login-password" required name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" placeholder="Introduce tu contraseña" disabled={pending} /><button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)} disabled={pending}>{showPassword ? <EyeSlash size={19} /> : <Eye size={19} />}</button></div>
+          </>}
+          {error && <p className="login-error" role="alert">{error}</p>}
+          <button className="button" disabled={pending}>{pending ? (recovering ? 'Enviando enlace…' : 'Entrando…') : recovering ? 'Enviar enlace de recuperación' : 'Iniciar sesión'}</button>
+          {recovering && <button type="button" className="login-text-button login-back" disabled={pending} onClick={() => changeMode(false)}><ArrowLeft size={15} /> Volver a iniciar sesión</button>}
+        </form>}
+      </section>
+      <a className="login-site-link" href="/"><ArrowLeft size={14} /> Volver a la web</a>
+    </div>
+  </main>
 }
 
 function AdminNotice({ title, text, onLogout }) { return <main className="admin-login"><div><img className="admin-notice-logo" src="/assets/victiker-logo-header.png" alt="Victiker" /><h1>{title}</h1>{text && <p>{text}</p>}{onLogout && <button className="button button--dark" onClick={onLogout}>Cerrar sesión</button>}</div></main> }

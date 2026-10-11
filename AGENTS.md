@@ -43,3 +43,5 @@ La consulta de IA debe explicar, antes del campo de texto, qué obtiene el visit
 Orientación IA: personalizar la respuesta con los detalles concretos y distinguir consultas preventivas de averías actuales. Si alguien pide hacerse visible ante una posible avería nocturna, priorizar consejos de seguridad y ofrecer equipamiento reflectante del catálogo cuando exista; no tratar toda situación de seguridad como prohibición absoluta de mostrar productos. El botón de contacto con Víctor en la respuesta lleva un pulso naranja discreto y respeta movimiento reducido.
 
 Cuando la orientación recomienda artículos que sí existen en el catálogo, enseñarlos dentro de la respuesta como fichas compactas con imagen, nombre, precio y disponibilidad, y ofrecer "Ver más productos" para abrir la búsqueda pertinente. No dejar la respuesta en una promesa de buscar opciones si ya se pueden mostrar resultados.
+
+Login: mantener un acceso limpio, sin etiqueta «Área privada», icono de candado ni subtítulo bajo el título de inicio de sesión. Conservar las instrucciones útiles de recuperación de contraseña.

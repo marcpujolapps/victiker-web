@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { collection, doc, getDoc, limit, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { ref, uploadBytesResumable } from 'firebase/storage'
@@ -13,6 +13,7 @@ export function watchAdmin(callback) {
   })
 }
 export async function login(email, password) { requireFirebase(); return signInWithEmailAndPassword(auth, email, password) }
+export async function resetPassword(email) { requireFirebase(); return sendPasswordResetEmail(auth, email.trim()) }
 export async function logout() { requireFirebase(); return signOut(auth) }
 export async function startImport(file, vehicleType, onProgress = () => {}) {
   requireFirebase()

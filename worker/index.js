@@ -42,13 +42,17 @@ export async function sendRequestEmail(request, env) {
   const type = payload?.type;
   const name = cleanText(payload?.name, 120);
   const phone = cleanText(payload?.phone, 60);
+  const customerEmail = cleanText(payload?.email, 254);
   if (!name || !phone || !["appointment", "parts"].includes(type)) {
     return json({ error: "Faltan datos obligatorios." }, 400);
+  }
+  if (type === "parts" && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) || customerEmail.length > 254)) {
+    return json({ error: "Indica un correo electrónico válido." }, 400);
   }
 
   const email = type === "appointment"
     ? appointmentEmail({ name, phone, need: cleanText(payload.need, 160), details: cleanText(payload.details, 2000) })
-    : partsEmail({ name, phone, vehicle: cleanText(payload.vehicle, 300), items: sanitizeItems(payload.items) });
+    : partsEmail({ name, email: customerEmail, phone, vehicle: cleanText(payload.vehicle, 300), items: sanitizeItems(payload.items) });
 
   if (type === "parts" && email.items.length === 0) {
     return json({ error: "Añade al menos una pieza a la solicitud." }, 400);
@@ -66,6 +70,7 @@ export async function sendRequestEmail(request, env) {
       subject: email.subject,
       html: email.html,
       text: email.text,
+      ...(type === "parts" ? { reply_to: customerEmail } : {}),
     }),
   });
 
@@ -93,10 +98,11 @@ function appointmentEmail({ name, phone, need, details }) {
   });
 }
 
-function partsEmail({ name, phone, vehicle, items }) {
+function partsEmail({ name, email, phone, vehicle, items }) {
   const totalUnits = items.reduce((total, item) => total + item.quantity, 0);
   const details = [
     ["Solicitante", name],
+    ["Correo electrónico", email],
     ["Teléfono", phone],
     ["Vehículo / embarcación", vehicle || "No especificado"],
     ["Piezas solicitadas", `${totalUnits} unidad${totalUnits === 1 ? "" : "es"}`],

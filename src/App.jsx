@@ -145,7 +145,7 @@ export function App() {
       </main>
       <SiteFooter navigate={navigate} />
       <WhatsAppLink floating raised={pathname.startsWith('/catalogo') && itemCount > 0} />
-      <RequestDrawer cart={cart} updateQuantity={updateQuantity} isOpen={cartOpen} onClose={() => setCartOpen(false)} navigate={navigate} />
+      <RequestDrawer cart={cart} updateQuantity={updateQuantity} clearCart={() => setCart([])} isOpen={cartOpen} onClose={() => setCartOpen(false)} navigate={navigate} />
       {!cartOpen && <CookieNotice />}
       {lastAdded && <div className="request-feedback" role="status" aria-live="polite">
         <CheckCircle size={18} weight="fill" />

@@ -22,10 +22,11 @@ service cloud.firestore {
     }
 
     function validRequestCreate() {
-      return request.resource.data.keys().hasOnly(['type', 'name', 'phone', 'vehicle', 'need', 'details', 'items', 'status', 'notes', 'createdAt', 'updatedAt'])
+      return request.resource.data.keys().hasOnly(['type', 'name', 'email', 'phone', 'vehicle', 'need', 'details', 'items', 'status', 'notes', 'createdAt', 'updatedAt'])
         && request.resource.data.type in ['parts', 'appointment']
         && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 120
         && request.resource.data.phone is string && request.resource.data.phone.size() > 0 && request.resource.data.phone.size() <= 60
+        && ((request.resource.data.type == 'parts' && request.resource.data.email is string && request.resource.data.email.size() > 3 && request.resource.data.email.size() <= 254 && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')) || (request.resource.data.type == 'appointment' && !('email' in request.resource.data)))
         && (!('vehicle' in request.resource.data) || request.resource.data.vehicle is string && request.resource.data.vehicle.size() <= 300)
         && (!('need' in request.resource.data) || request.resource.data.need is string && request.resource.data.need.size() <= 160)
         && (!('details' in request.resource.data) || request.resource.data.details is string && request.resource.data.details.size() <= 2000)

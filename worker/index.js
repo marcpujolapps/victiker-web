@@ -26,6 +26,7 @@ export default {
 
 const NOTIFICATION_EMAIL = "marcpujolapps@gmail.com";
 
+
 export async function sendRequestEmail(request, env) {
   if (!env.RESEND_API_KEY || !env.RESEND_FROM_EMAIL) {
     return json({ error: "El servicio de correo no está configurado." }, 503);

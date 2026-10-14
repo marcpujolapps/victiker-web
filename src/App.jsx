@@ -1,3 +1,5 @@
+import { normalizePathname, isAdminPath } from './lib/routes.js'
+import { pageMetadata } from './lib/seo'
 import { CheckCircle } from '@phosphor-icons/react'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { RequestDrawer } from './components/RequestDrawer'
@@ -23,37 +25,6 @@ const routes = {
   '/aviso-legal': LegalPage, '/privacidad': LegalPage, '/cookies': LegalPage, '/condiciones-de-compra': LegalPage,
 }
 
-const pageMetadata = {
-  '/': {
-    title: 'Victiker | Taller móvil para motos y embarcaciones',
-    description: 'Reparación, mantenimiento, diagnosis y repuestos para motos y embarcaciones.',
-  },
-  '/servicios': {
-    title: 'Servicios para motos y embarcaciones | Victiker',
-    description: 'Reparación, mantenimiento y diagnosis profesional para motos y embarcaciones.',
-  },
-  '/taller-movil': {
-    title: 'Taller móvil con cita previa | Victiker',
-    description: 'Servicio técnico móvil para motos y embarcaciones, donde lo necesitas y con cita previa.',
-  },
-  '/catalogo': {
-    title: 'Catálogo de repuestos | Victiker',
-    description: 'Consulta repuestos para motos y embarcaciones y envía tu solicitud a Victiker.',
-  },
-  '/contacto': {
-    title: 'Contacto y citas | Victiker',
-    description: 'Contacta con Victiker para solicitar asistencia, mantenimiento o repuestos.',
-  },
-  '/admin': {
-    title: 'Administración | Victiker',
-    description: 'Área privada de administración de Victiker.',
-    noindex: true,
-  },
-  '/aviso-legal': { title: 'Aviso legal | Victiker', description: 'Información legal y datos del titular de Victiker.' },
-  '/privacidad': { title: 'Política de privacidad | Victiker', description: 'Información sobre el tratamiento de datos personales en Victiker.' },
-  '/cookies': { title: 'Política de cookies | Victiker', description: 'Información sobre cookies y almacenamiento técnico de Victiker.' },
-  '/condiciones-de-compra': { title: 'Condiciones de compra | Victiker', description: 'Cómo se tramitan las solicitudes y compras de repuestos en Victiker.' },
-}
 
 const socialImage = 'https://victiker.com/assets/victiker-hero.png'
 
@@ -68,8 +39,8 @@ function setMeta(name, content, property = false) {
   element.setAttribute('content', content)
 }
 
-export function App() {
-  const [path, setPath] = useState(() => `${window.location.pathname}${window.location.search}`)
+export function App({ initialPath = '/' }) {
+  const [path, setPath] = useState(() => typeof window === 'undefined' ? initialPath : `${window.location.pathname}${window.location.search}`)
   const [cart, setCart] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
   const [lastAdded, setLastAdded] = useState(null)
@@ -85,7 +56,7 @@ export function App() {
   }, [])
 
   useEffect(() => {
-    const pathname = path.split('?')[0]
+    const pathname = normalizePathname(path)
     const metadata = pageMetadata[pathname] ?? pageMetadata[pathname.startsWith('/admin/') ? '/admin' : pathname.startsWith('/repuestos/') ? '/catalogo' : '/']
     const canonicalUrl = `https://victiker.com${pathname === '/' ? '/' : pathname}`
     document.title = metadata.title
@@ -131,12 +102,12 @@ export function App() {
     }))
   }
 
-  const pathname = path.split('?')[0]
+  const pathname = normalizePathname(path)
   const productMatch = pathname.match(/^\/producto\/(.+)$/)
   const Page = routes[pathname] ?? (pathname.startsWith('/repuestos/') ? CatalogPage : HomePage)
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
-  if (pathname === '/admin' || pathname.startsWith('/admin/producto/')) return <Suspense fallback={<main className="admin-login"><p>Cargando administración…</p></main>}><AdminPage navigate={navigate} path={pathname} /></Suspense>
+  if (isAdminPath(pathname)) return <Suspense fallback={<main className="admin-login"><p>Cargando administración…</p></main>}><AdminPage navigate={navigate} path={pathname} /></Suspense>
   return (
     <div className="site-shell">
       <SiteHeader path={pathname} itemCount={itemCount} navigate={navigate} openRequest={() => setCartOpen(true)} />

@@ -4,7 +4,7 @@ import { archiveCatalogItem, catalogPayload, getCatalogItem, getCatalogPage, get
 import { optimizeCatalogImage, removeCatalogImage, uploadCatalogImage, validateCatalogImage } from '../lib/catalogImages'
 import { firebaseConfigured } from '../lib/firebase'
 import { login, logout, resetPassword, startImport, watchAdmin, watchBihrSyncJobs, watchImportJobs } from '../lib/admin'
-import { updateRequest, watchRequests } from '../lib/requests'
+import { removeRequest, updateRequest, watchRequests } from '../lib/requests'
 
 const emptyItem = { reference: '', description: '', price: '', discount: 0, vehicleType: 'moto', categoryId: '', subcategoryId: '', status: 'active', brand: '', supplierReference: '', barcode: '', sourceCategory: '', replacementReference: '', salesMultiple: 1, imageUrl: '' }
 const money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
@@ -161,16 +161,32 @@ function AdminDashboard({ navigate, path, user }) {
 
 function RequestsAdmin({ type, requests, setMessage }) {
   const [selected, setSelected] = useState(null)
-  async function save(request, notes) { try { await updateRequest(request.id, notes); setSelected({ ...request, notes }); setMessage('Notas guardadas.') } catch (error) { setMessage(error.message) } }
+  const [pending, setPending] = useState(false)
+  async function save(request, notes) {
+    if (pending) return
+    setPending(true)
+    try { await updateRequest(request.id, notes); setSelected({ ...request, notes }); setMessage('Notas guardadas.') }
+    catch (error) { setMessage(error.message) }
+    finally { setPending(false) }
+  }
+  async function remove(request) {
+    if (pending) return
+    const label = type === 'parts' ? 'el pedido' : 'la cita'
+    if (!window.confirm(`¿Quieres eliminar definitivamente ${label} de “${request.name}”? Se borrarán sus datos y notas internas. Esta acción no se puede deshacer.`)) return
+    setPending(true)
+    try { await removeRequest(request.id); setSelected(null); setMessage(type === 'parts' ? 'Pedido eliminado.' : 'Cita eliminada.') }
+    catch { setMessage('No se ha podido eliminar la solicitud. Inténtalo de nuevo.') }
+    finally { setPending(false) }
+  }
   const isParts = type === 'parts'
-  return <><header className="admin-header"><div><h1>{isParts ? 'Pedidos' : 'Citas'}</h1><p>{isParts ? 'Gestiona las solicitudes de repuestos recibidas desde la web.' : 'Gestiona las solicitudes de cita recibidas desde la web.'}</p></div></header><div className="request-workspace"><div className="request-list">{requests.length === 0 ? <p className="admin-loading">No hay {isParts ? 'pedidos' : 'citas'} todavía.</p> : requests.map((request) => <button key={request.id} className={selected?.id === request.id ? 'is-selected' : ''} onClick={() => setSelected(request)}><strong>{request.name}</strong><span>{isParts ? `${request.items?.length || 0} referencias` : request.need}</span><small>{formatJobDate(request.createdAt)}</small></button>)}</div>{selected ? <RequestDetail request={selected} onSave={save} /> : <div className="request-detail request-detail--empty"><ChatText size={36} /><p>Selecciona una solicitud para ver sus datos y añadir notas internas.</p></div>}</div></>
+  return <><header className="admin-header"><div><h1>{isParts ? 'Pedidos' : 'Citas'}</h1><p>{isParts ? 'Gestiona las solicitudes de repuestos recibidas desde la web.' : 'Gestiona las solicitudes de cita recibidas desde la web.'}</p></div></header><div className="request-workspace"><div className="request-list">{requests.length === 0 ? <p className="admin-loading">No hay {isParts ? 'pedidos' : 'citas'} todavía.</p> : requests.map((request) => <button key={request.id} className={selected?.id === request.id ? 'is-selected' : ''} disabled={pending} onClick={() => setSelected(request)}><strong>{request.name}</strong><span>{isParts ? `${request.items?.length || 0} referencias` : request.need}</span><small>{formatJobDate(request.createdAt)}</small></button>)}</div>{selected ? <RequestDetail request={selected} onSave={save} onDelete={remove} pending={pending} /> : <div className="request-detail request-detail--empty"><ChatText size={36} /><p>Selecciona una solicitud para ver sus datos y añadir notas internas.</p></div>}</div></>
 }
 
-function RequestDetail({ request, onSave }) {
+function RequestDetail({ request, onSave, onDelete, pending }) {
   const [notes, setNotes] = useState(request.notes || '')
   useEffect(() => { setNotes(request.notes || '') }, [request.id, request.notes])
   const isParts = request.type === 'parts'
-  return <article className="request-detail"><header><div><span className="request-detail__eyebrow">{isParts ? 'Solicitud de repuestos' : 'Solicitud de cita'}</span><h2>{request.name}</h2></div></header><dl><dt>Teléfono</dt><dd>{request.phone}</dd>{isParts ? <><dt>Correo electrónico</dt><dd>{request.email || '—'}</dd><dt>Vehículo</dt><dd>{request.vehicle || 'No especificado'}</dd><dt>Piezas</dt><dd>{request.items?.map((item) => `${item.description || item.title} · ${item.reference} × ${item.quantity}`).join('\n') || '—'}</dd></> : <><dt>Necesidad</dt><dd>{request.need}</dd><dt>Detalles</dt><dd>{request.details || '—'}</dd></>}</dl><label className="request-notes">Notas internas<textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Escribe aquí el seguimiento privado…" rows="7" /></label><footer><button className="button" onClick={() => onSave(request, notes)}>Guardar notas</button></footer></article>
+  return <article className="request-detail"><header><div><span className="request-detail__eyebrow">{isParts ? 'Solicitud de repuestos' : 'Solicitud de cita'}</span><h2>{request.name}</h2></div></header><dl><dt>Teléfono</dt><dd>{request.phone}</dd>{isParts ? <><dt>Correo electrónico</dt><dd>{request.email || '—'}</dd><dt>Vehículo</dt><dd>{request.vehicle || 'No especificado'}</dd><dt>Piezas</dt><dd>{request.items?.map((item) => `${item.description || item.title} · ${item.reference} × ${item.quantity}`).join('\n') || '—'}</dd></> : <><dt>Necesidad</dt><dd>{request.need}</dd><dt>Detalles</dt><dd>{request.details || '—'}</dd></>}</dl><label className="request-notes">Notas internas<textarea disabled={pending} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Escribe aquí el seguimiento privado…" rows="7" /></label><footer><button type="button" className="request-delete" disabled={pending} onClick={() => onDelete(request)}><Trash size={16} aria-hidden="true" /> {isParts ? 'Eliminar pedido' : 'Eliminar cita'}</button><button type="button" className="button" disabled={pending} onClick={() => onSave(request, notes)}>{pending ? 'Procesando…' : 'Guardar notas'}</button></footer></article>
 }
 
 function CatalogAdmin({ items, filters, setFilters, loading, cursor, history, categories, onOpen, onNext, onPrevious, onAction, onAdd }) {

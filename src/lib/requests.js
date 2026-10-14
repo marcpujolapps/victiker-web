@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db, requireFirebase } from './firebase'
 
 export async function createRequest(payload) {
@@ -14,4 +14,9 @@ export function watchRequests(type, callback) {
 export async function updateRequest(id, notes) {
   requireFirebase()
   return updateDoc(doc(db, 'requests', id), { notes, updatedAt: serverTimestamp() })
+}
+
+export async function removeRequest(id) {
+  requireFirebase()
+  return deleteDoc(doc(db, 'requests', id))
 }

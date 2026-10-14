@@ -3,6 +3,73 @@
   "outputDirectory": "dist/client",
   "framework": "vite",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/servicios",
+      "destination": "/servicios/index.html"
+    },
+    {
+      "source": "/taller-movil",
+      "destination": "/taller-movil/index.html"
+    },
+    {
+      "source": "/contacto",
+      "destination": "/contacto/index.html"
+    },
+    {
+      "source": "/aviso-legal",
+      "destination": "/aviso-legal/index.html"
+    },
+    {
+      "source": "/privacidad",
+      "destination": "/privacidad/index.html"
+    },
+    {
+      "source": "/cookies",
+      "destination": "/cookies/index.html"
+    },
+    {
+      "source": "/condiciones-de-compra",
+      "destination": "/condiciones-de-compra/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
   ]
 }

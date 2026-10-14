@@ -13,7 +13,7 @@ export function LegalPage({ path, navigate }) {
 }
 
 export function CookieNotice() {
-  const [visible, setVisible] = React.useState(() => !window.localStorage.getItem('victiker-cookie-choice'))
+  const [visible, setVisible] = React.useState(() => typeof window === 'undefined' || !window.localStorage.getItem('victiker-cookie-choice'))
   function choose(value) { window.localStorage.setItem('victiker-cookie-choice', value); setVisible(false) }
   useEffect(() => {
     const open = () => setVisible(true)

@@ -16,7 +16,7 @@ Admin console preference: use a restrained, premium product-console language ins
 
 Admin catalog preference: keep guidance in the relevant row or control instead of a general instruction box. Show Bihr references as synchronized data and retain a visible, unavailable edit icon with a tooltip explaining that Bihr API data cannot be edited.
 
-Pedidos y citas: no se asignan estados desde el panel; la gestión interna se limita a guardar notas.
+Pedidos y citas: no se asignan estados desde el panel; se pueden guardar notas y eliminar solicitudes con confirmación previa, únicamente como administrador.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 

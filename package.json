@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prepare-sites-build.mjs",
+    "build": "vite build && node scripts/prepare-admin-entry.mjs && node scripts/prepare-sites-build.mjs && node scripts/prerender-seo.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
     "firebase:grant-admin": "npm --prefix functions run grant-admin --"

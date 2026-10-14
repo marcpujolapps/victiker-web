@@ -1,3 +1,4 @@
+import { SiteLink } from '../components/SiteLink'
 import { ArrowRight, Engine, ImageSquare, MagnifyingGlass, ShieldCheck, Sparkle, Truck, Wrench } from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
 import { consultWorkshopAi } from '../lib/workshopAi'
@@ -141,7 +142,7 @@ export function HomePage({ navigate }) {
       <img className="hero-brand-mobile" src="/assets/victiker-logo-2.png" alt="Victiker: taller especializado, piezas, reparación de motos y motores de barco" />
       <div className="hero-content">
         <h1>El taller de Víctor,<br /><em>donde lo necesitas.</em></h1>
-        <p>Reparación, mantenimiento y diagnosis para motos y embarcaciones.</p>
+        <p>Reparación, mantenimiento y diagnosis para motos y embarcaciones. Desde Totana, Murcia.</p>
         <div className="hero-consult" aria-label="Consulta de orientación Victiker">
           {consulting ? <div className="hero-consult__loading" role="status" aria-live="polite">
             <div className="hero-consult__pulse" aria-hidden="true"><span /><span /><span /></div>
@@ -173,7 +174,7 @@ export function HomePage({ navigate }) {
             {consultError && <p className="hero-consult__error" role="alert">{consultError}</p>}
           </form>}
         </div>
-        {!consultation && !consulting && <button className="hero-consult__direct" type="button" onClick={() => navigate('/contacto')}>Prefiero hablar directamente con Víctor <ArrowRight size={16} /></button>}
+        {!consultation && !consulting && <SiteLink className="hero-consult__direct" href="/contacto" navigate={navigate}>Prefiero hablar directamente con Víctor <ArrowRight size={16} /></SiteLink>}
       </div>
     </section>
     <section className="home-workshop" aria-labelledby="home-workshop-title">
@@ -181,21 +182,21 @@ export function HomePage({ navigate }) {
         <p className="section-eyebrow">Taller móvil Victiker</p>
         <h2 id="home-workshop-title">El taller va<br />hasta donde estés.</h2>
         <p>Reparación, mantenimiento y diagnosis para motos y embarcaciones, con atención directa de Víctor.</p>
-        <button className="button" onClick={() => navigate('/taller-movil')}>Descubrir el taller móvil <ArrowRight size={19} /></button>
+        <SiteLink className="button" href="/taller-movil" navigate={navigate}>Descubrir el taller móvil <ArrowRight size={19} /></SiteLink>
       </div>
       <img className="home-workshop__image home-parallax-image" src="/assets/home-workshop.jpg" alt="Víctor trabaja junto a una moto con el taller móvil abierto" loading="lazy" />
     </section>
     <section className="choice-section" aria-label="Explora repuestos por vehículo">
-      <button className="choice-card" type="button" onClick={() => navigate('/repuestos/moto')} aria-label="Ver repuestos para moto">
+      <SiteLink className="choice-card" href="/repuestos/moto" navigate={navigate} aria-label="Ver repuestos para moto">
         <img className="home-parallax-image" src="/assets/home-moto.jpg" alt="" loading="lazy" />
         <span className="choice-card__shade" aria-hidden="true" />
         <span className="choice-card__content"><span className="choice-card__eyebrow">Piezas y accesorios</span><span className="choice-card__title">Moto</span><span className="choice-card__action">Ver catálogo <ArrowRight size={19} /></span></span>
-      </button>
-      <button className="choice-card choice-card--boat" type="button" onClick={() => navigate('/repuestos/barco')} aria-label="Ver repuestos para embarcación">
+      </SiteLink>
+      <SiteLink className="choice-card choice-card--boat" href="/repuestos/barco" navigate={navigate} aria-label="Ver repuestos para embarcación">
         <img className="home-parallax-image" src="/assets/home-boat.jpg" alt="" loading="lazy" />
         <span className="choice-card__shade" aria-hidden="true" />
         <span className="choice-card__content"><span className="choice-card__eyebrow">Motor y equipamiento</span><span className="choice-card__title">Embarcación</span><span className="choice-card__action">Ver catálogo <ArrowRight size={19} /></span></span>
-      </button>
+      </SiteLink>
     </section>
     <section className="home-trust" aria-label="Lo que ofrece Victiker">
       <article><Wrench size={28} weight="regular" aria-hidden="true" /><h3>Reparación y mantenimiento</h3><p>Cuidados para motos y motores marinos.</p></article>
@@ -205,7 +206,7 @@ export function HomePage({ navigate }) {
     </section>
     <section className="home-closing" aria-labelledby="home-closing-title">
       <img src="/assets/home-closing.jpg" alt="Una moto recorre una carretera junto al Mediterráneo" loading="lazy" />
-      <div className="home-closing__content"><h2 id="home-closing-title">Más kilómetros.<br />Más historias.</h2><p>Nosotros cuidamos de tu moto o embarcación. Tú eliges el destino.</p><button className="button" onClick={() => navigate('/contacto')}>Hablemos <ArrowRight size={19} /></button></div>
+      <div className="home-closing__content"><h2 id="home-closing-title">Más kilómetros.<br />Más historias.</h2><p>Nosotros cuidamos de tu moto o embarcación. Tú eliges el destino.</p><SiteLink className="button" href="/contacto" navigate={navigate}>Hablemos <ArrowRight size={19} /></SiteLink></div>
     </section>
   </>
 }

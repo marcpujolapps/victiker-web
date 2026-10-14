@@ -18,7 +18,7 @@ service cloud.firestore {
       allow create: if validRequestCreate();
       allow read: if admin();
       allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notes', 'updatedAt']) && validRequestAdminUpdate();
-      allow delete: if false;
+      allow delete: if admin();
     }
 
     function validRequestCreate() {

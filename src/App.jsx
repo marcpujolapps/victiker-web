@@ -5,6 +5,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { RequestDrawer } from './components/RequestDrawer'
 import { SiteFooter } from './components/SiteFooter'
 import { SiteHeader } from './components/SiteHeader'
+import { OfferBanner } from './components/OfferBanner'
 import { WhatsAppLink } from './components/WhatsAppLink'
 import { CatalogPage } from './pages/CatalogPage'
 import { ContactPage } from './pages/ContactPage'
@@ -112,6 +113,7 @@ export function App({ initialPath = '/' }) {
     <div className="site-shell">
       <SiteHeader path={pathname} itemCount={itemCount} navigate={navigate} openRequest={() => setCartOpen(true)} />
       <main>
+        <OfferBanner navigate={navigate} />
         {productMatch ? <ProductPage key={path} id={decodeURIComponent(productMatch[1])} navigate={navigate} addToCart={addToCart} cart={cart} openRequest={() => setCartOpen(true)} /> : <Page key={path} path={pathname} navigate={navigate} addToCart={addToCart} cart={cart} itemCount={itemCount} openRequest={() => setCartOpen(true)} />}
       </main>
       <SiteFooter navigate={navigate} />

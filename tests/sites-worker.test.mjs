@@ -90,6 +90,7 @@ test("includes catalog descriptions and excludes photos from parts emails", asyn
       body: JSON.stringify({
         type: "parts",
         name: "Marc",
+        email: "customer@example.test",
         phone: "600 000 000",
         items: [{
           title: "Pastillas de freno",
@@ -103,6 +104,8 @@ test("includes catalog descriptions and excludes photos from parts emails", asyn
     }), { RESEND_API_KEY: "test-key", RESEND_FROM_EMAIL: "Victiker <test@example.test>", ASSETS: { fetch: async () => new Response("asset") } });
 
     assert.equal(response.status, 200);
+    assert.deepEqual(emailPayload.to, ["victorpereztudela25@gmail.com"]);
+    assert.equal(emailPayload.reply_to, "customer@example.test");
     assert.match(emailPayload.html, /Pastillas sinterizadas para uso urbano/);
     assert.ok(!emailPayload.html.includes("<img"));
     assert.ok(!emailPayload.html.includes("https://example.test/brake-pads.jpg"));
@@ -116,4 +119,30 @@ test("emits the files required by Sites packaging", async () => {
   await access(new URL("../dist/client/index.html", import.meta.url));
   await access(new URL("../dist/server/index.js", import.meta.url));
   await access(new URL("../dist/.openai/hosting.json", import.meta.url));
+});
+
+test("routes appointment notifications to the configured recipient or Victor by default", async () => {
+  const originalFetch = globalThis.fetch;
+  let emailPayload;
+  globalThis.fetch = async (_url, options) => {
+    emailPayload = JSON.parse(options.body);
+    return new Response(JSON.stringify({ id: "sample-email" }), { status: 200 });
+  };
+  try {
+    for (const recipient of [undefined, "  ", " workshop@example.test "]) {
+      const response = await worker.fetch(new Request("https://example.test/api/requests", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: "appointment", name: "Ada", phone: "600 000 000" }),
+      }), {
+        RESEND_API_KEY: "test-key",
+        RESEND_FROM_EMAIL: "Victiker <test@example.test>",
+        RESEND_TO_EMAIL: recipient,
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(emailPayload.to, [recipient?.trim() || "victorpereztudela25@gmail.com"]);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

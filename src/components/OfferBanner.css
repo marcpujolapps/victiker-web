@@ -1,0 +1,35 @@
+.offer-banner { color:var(--offer-text,#fff); background:var(--offer-background,#153866); }
+.offer-banner__inner { display:flex; align-items:center; gap:20px; max-width:1440px; margin:0 auto; padding:10px clamp(20px,4vw,64px); }
+.offer-banner__viewport { display:grid; min-width:0; flex:1; }
+.offer-banner__slide { grid-area:1 / 1; display:flex; align-items:center; gap:18px; min-width:0; visibility:hidden; pointer-events:none; }
+.offer-banner__slide.is-visible { visibility:visible; pointer-events:auto; }
+.offer-banner__image { display:flex; align-items:center; justify-content:center; flex:0 0 112px; }
+.offer-banner__image img { display:block; width:100%; height:64px; object-fit:contain; }
+.offer-banner__copy { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; min-width:0; overflow-wrap:anywhere; }
+.offer-banner h2 { flex-basis:100%; margin:0; color:inherit; font-size:18px; line-height:1.25; font-weight:650; letter-spacing:-.025em; }
+.offer-banner p { max-width:780px; margin:0; color:inherit; opacity:.85; font-size:12px; line-height:1.45; white-space:pre-line; }
+.offer-banner__link { display:inline-flex; align-items:center; gap:6px; color:inherit; font-size:12px; font-weight:650; text-decoration:none; }
+.offer-banner__link:hover { text-decoration:underline; text-underline-offset:4px; }
+.offer-banner__controls { display:flex; align-items:center; gap:3px; flex-shrink:0; }
+.offer-banner__controls button { display:grid; place-items:center; width:30px; height:30px; border:1px solid transparent; border-radius:4px; color:inherit; background:transparent; cursor:pointer; }
+.offer-banner__controls button:hover { background:color-mix(in srgb,currentColor 10%,transparent); }
+.offer-banner__position { min-width:43px; font-size:12px; font-variant-numeric:tabular-nums; text-align:center; }
+.offer-banner__position span { opacity:.65; }
+.offer-banner__controls .offer-banner__pause { margin-left:5px; border-color:color-mix(in srgb,currentColor 28%,transparent); }
+.offer-banner :is(a,button):focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+@media(max-width:700px) {
+  .offer-banner__inner { flex-wrap:wrap; gap:4px; padding:10px 14px 7px; }
+  .offer-banner__viewport { flex-basis:100%; }
+  .offer-banner__slide { gap:12px; }
+  .offer-banner__image { flex-basis:76px; }
+  .offer-banner__image img { height:64px; }
+  .offer-banner h2 { font-size:16px; }
+  .offer-banner p { font-size:12px; }
+  .offer-banner__link { font-size:11px; }
+  .offer-banner__controls { justify-content:flex-end; width:100%; }
+  .offer-banner__controls button { height:28px; }
+}
+@media(max-width:380px) {
+  .offer-banner__slide { gap:10px; }
+  .offer-banner__image { flex-basis:62px; }
+}

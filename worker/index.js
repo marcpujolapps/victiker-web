@@ -24,7 +24,7 @@ export default {
   },
 };
 
-const NOTIFICATION_EMAIL = "marcpujolapps@gmail.com";
+const NOTIFICATION_EMAIL = "victorpereztudela25@gmail.com";
 
 
 export async function sendRequestEmail(request, env) {
@@ -66,7 +66,7 @@ export async function sendRequestEmail(request, env) {
     },
     body: JSON.stringify({
       from: env.RESEND_FROM_EMAIL,
-      to: [NOTIFICATION_EMAIL],
+      to: [env.RESEND_TO_EMAIL?.trim() || NOTIFICATION_EMAIL],
       subject: email.subject,
       html: email.html,
       text: email.text,

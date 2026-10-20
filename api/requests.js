@@ -21,6 +21,7 @@ export default async function handler(req, res) {
     const response = await sendRequestEmail(request, {
       RESEND_API_KEY: process.env.RESEND_API_KEY,
       RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
+      RESEND_TO_EMAIL: process.env.RESEND_TO_EMAIL,
     })
     return res.status(response.status).json(await response.json())
   } catch (error) {

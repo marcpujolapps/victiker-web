@@ -1,10 +1,11 @@
-import { Archive, ArrowLeft, ArrowSquareOut, CalendarBlank, CaretLeft, CaretRight, ChatText, CloudArrowDown, DownloadSimple, Eye, EyeSlash, Package, PencilSimple, Plus, SignOut, SquaresFour, Trash, UploadSimple, X } from '@phosphor-icons/react'
+import { Archive, ArrowLeft, ArrowSquareOut, CalendarBlank, CaretLeft, CaretRight, ChatText, CloudArrowDown, DownloadSimple, Eye, EyeSlash, Megaphone, Package, PencilSimple, Plus, SignOut, SquaresFour, Trash, UploadSimple, X } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 import { archiveCatalogItem, catalogPayload, getCatalogItem, getCatalogPage, getTaxonomies, normalize, removeCatalogItem, restoreCatalogItem, saveCatalogItem, saveTaxonomy, VEHICLE_TYPES } from '../lib/catalog'
 import { optimizeCatalogImage, removeCatalogImage, uploadCatalogImage, validateCatalogImage } from '../lib/catalogImages'
 import { firebaseConfigured } from '../lib/firebase'
 import { login, logout, resetPassword, startImport, watchAdmin, watchBihrSyncJobs, watchImportJobs } from '../lib/admin'
 import { removeRequest, updateRequest, watchRequests } from '../lib/requests'
+import { OffersAdmin } from '../components/OffersAdmin'
 
 const emptyItem = { reference: '', description: '', price: '', discount: 0, vehicleType: 'moto', categoryId: '', subcategoryId: '', status: 'active', brand: '', supplierReference: '', barcode: '', sourceCategory: '', replacementReference: '', salesMultiple: 1, imageUrl: '' }
 const money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
@@ -99,6 +100,11 @@ function AdminNotice({ title, text, onLogout }) { return <main className="admin-
 function AdminDashboard({ navigate, path, user }) {
   const [section, setSection] = useState('catalog'); const [items, setItems] = useState([]); const [cursor, setCursor] = useState(null); const [history, setHistory] = useState([])
   const [filters, setFilters] = useState({ term: '', vehicleType: 'all', status: 'active' }); const [loading, setLoading] = useState(true); const [taxonomies, setTaxonomies] = useState([]); const [message, setMessage] = useState(''); const [partsRequests, setPartsRequests] = useState([]); const [appointmentRequests, setAppointmentRequests] = useState([])
+  useEffect(() => {
+    if (!message) return undefined
+    const timer = window.setTimeout(() => setMessage(''), 5000)
+    return () => window.clearTimeout(timer)
+  }, [message])
   const productId = path?.match(/^\/admin\/producto\/(.+)$/)?.[1]
   function showSection(next) { setSection(next); if (productId) navigate('/admin') }
   const [signingOut, setSigningOut] = useState(false)
@@ -148,12 +154,13 @@ function AdminDashboard({ navigate, path, user }) {
     }
   }
   async function action(type, item) { const label = type === 'delete' ? 'borrar definitivamente' : type === 'archive' ? 'archivar' : 'restaurar'; if (!window.confirm(`¿Quieres ${label} “${item.reference}”?`)) return false; try { if (type === 'delete') { await removeCatalogItem(item.id); await removeCatalogImage(item.imagePath).catch(() => {}) } if (type === 'archive') await archiveCatalogItem(item.id, user.uid); if (type === 'restore') await restoreCatalogItem(item.id, user.uid); setMessage('Cambio guardado.'); load(null, true); return true } catch (error) { setMessage(error.message); return false } }
-  return <main className="admin-shell"><aside className="admin-sidebar"><button className="admin-brand" onClick={() => navigate('/')}><img src="/assets/victiker-logo-header.png" alt="Victiker" /></button><nav><button className={section === 'catalog' ? 'is-active' : ''} onClick={() => showSection('catalog')}><SquaresFour size={17} weight="duotone" /><span>Catálogo</span></button><button className={section === 'parts' && !productId ? 'is-active' : ''} onClick={() => showSection('parts')}><Package size={17} weight="duotone" /><span>Pedidos</span></button><button className={section === 'appointments' && !productId ? 'is-active' : ''} onClick={() => showSection('appointments')}><CalendarBlank size={17} weight="duotone" /><span>Citas</span></button><button className={section === 'imports' && !productId ? 'is-active' : ''} onClick={() => showSection('imports')}><UploadSimple size={17} weight="duotone" /><span>Importaciones</span></button></nav><button type="button" className="admin-signout" onClick={handleLogout} disabled={signingOut} aria-label={signingOut ? "Cerrando sesión…" : "Cerrar sesión"}><SignOut size={17} aria-hidden="true" /> <span>{signingOut ? "Cerrando sesión…" : "Cerrar sesión"}</span></button></aside><section className="admin-content">
-    {message && <div className="admin-message" role="status">{message}<button onClick={() => setMessage('')}><X size={16} /></button></div>}
+  return <main className="admin-shell"><aside className="admin-sidebar"><button className="admin-brand" onClick={() => navigate('/')}><img src="/assets/victiker-logo-header.png" alt="Victiker" /></button><nav><button className={section === 'catalog' ? 'is-active' : ''} onClick={() => showSection('catalog')}><SquaresFour size={17} weight="duotone" /><span>Catálogo</span></button><button className={section === 'parts' && !productId ? 'is-active' : ''} onClick={() => showSection('parts')}><Package size={17} weight="duotone" /><span>Pedidos</span></button><button className={section === 'appointments' && !productId ? 'is-active' : ''} onClick={() => showSection('appointments')}><CalendarBlank size={17} weight="duotone" /><span>Citas</span></button><button className={section === 'offers' && !productId ? 'is-active' : ''} onClick={() => showSection('offers')}><Megaphone size={17} weight="duotone" /><span>Ofertas</span></button><button className={section === 'imports' && !productId ? 'is-active' : ''} onClick={() => showSection('imports')}><UploadSimple size={17} weight="duotone" /><span>Importaciones</span></button></nav><button type="button" className="admin-signout" onClick={handleLogout} disabled={signingOut} aria-label={signingOut ? "Cerrando sesión…" : "Cerrar sesión"}><SignOut size={17} aria-hidden="true" /> <span>{signingOut ? "Cerrando sesión…" : "Cerrar sesión"}</span></button></aside><section className="admin-content">
+    {message && <div className="admin-message" role="status">{message}<button aria-label="Cerrar aviso" onClick={() => setMessage('')}><X size={16} /></button></div>}
     {productId ? <ProductDetail key={productId} productId={decodeURIComponent(productId)} categories={categories} taxonomies={taxonomies} navigate={navigate} onSave={save} onAction={action} onCreateTaxonomy={createTaxonomy} /> : <>
       {section === 'catalog' && <CatalogAdmin items={items} filters={filters} setFilters={setFilters} loading={loading} cursor={cursor} history={history} categories={categories} onOpen={(item) => navigate(`/admin/producto/${encodeURIComponent(item.id)}`)} onNext={() => { setHistory([...history, { items, cursor }]); load(cursor) }} onPrevious={() => { const pages = [...history]; const previous = pages.pop(); setHistory(pages); setItems(previous.items); setCursor(previous.cursor) }} onAction={action} onAdd={() => navigate('/admin/producto/nuevo')} />}
       {section === 'parts' && <RequestsAdmin type="parts" requests={partsRequests} setMessage={setMessage} />}
       {section === 'appointments' && <RequestsAdmin type="appointment" requests={appointmentRequests} setMessage={setMessage} />}
+      {section === 'offers' && <OffersAdmin user={user} setMessage={setMessage} />}
       {section === 'imports' && <Imports setMessage={setMessage} />}
     </>}
   </section></main>

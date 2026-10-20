@@ -1,0 +1,78 @@
+.offers-admin { max-width:1120px; margin:0 auto; color:#25272b; }
+.offers-admin .admin-header p { max-width:620px; line-height:1.6; }
+.offers-admin button,.offers-admin input,.offers-admin textarea { font:inherit; }
+.offers-admin button { cursor:pointer; }
+.offers-admin button:disabled { cursor:default; opacity:.45; }
+.offers-admin button:focus-visible,.offers-admin input:focus-visible,.offers-admin textarea:focus-visible,.offers-admin__upload:focus-within { outline:2px solid #747b87; outline-offset:3px; }
+.offers-admin__workspace { display:grid; gap:24px; align-items:start; }
+.offers-admin__workspace--editing { grid-template-columns:minmax(280px,.9fr) minmax(320px,1.1fr); }
+.offers-admin__list,.offers-admin__editor { min-width:0; border:1px solid #e2e4e8; border-radius:7px; background:#fff; }
+.offers-admin__list-heading,.offers-admin__editor-heading { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:19px 20px; border-bottom:1px solid #e7e9ec; }
+.offers-admin__list-heading h2,.offers-admin__editor-heading h2 { margin:0; font-size:15px; font-weight:650; letter-spacing:-.025em; }
+.offers-admin__list-heading>span { color:#777d86; font-size:12px; }
+.offers-admin__empty { min-height:250px; padding:36px 24px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#727781; }
+.offers-admin__empty>svg { margin-bottom:15px; color:#9298a2; }
+.offers-admin__empty h3 { margin:0; font-size:15px; font-weight:600; color:#3e434b; }
+.offers-admin__empty p { max-width:310px; margin:9px 0 21px; font-size:13px; line-height:1.6; }
+.offers-admin__row { padding:16px 19px 13px; border-bottom:1px solid #e7e9ec; }
+.offers-admin__row:last-child { border-bottom:0; }
+.offers-admin__row.is-selected { background:#f8f9fa; }
+.offers-admin__select { display:flex; width:100%; padding:0; border:0; background:transparent; text-align:left; color:inherit; gap:13px; align-items:center; }
+.offers-admin__thumbnail { display:grid; flex:0 0 68px; width:68px; height:54px; place-items:center; background:#f2f3f5; border:1px solid #e5e7ea; border-radius:4px; color:#969da7; overflow:hidden; }
+.offers-admin__thumbnail img { width:100%; height:100%; object-fit:contain; }
+.offers-admin__summary { display:flex; flex:1; min-width:0; flex-direction:column; align-items:flex-start; gap:5px; }
+.offers-admin__summary strong { max-width:100%; color:#25272b; font-size:13px; font-weight:600; line-height:1.4; overflow-wrap:anywhere; }
+.offers-admin__summary>span { width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; color:#818792; }
+.offers-admin__summary small { color:#777e88; font-size:10px; line-height:1.5; }
+.offers-admin__summary small.is-published { color:#247451; }
+.offers-admin__edit-icon { flex:none; color:#8b919a; }
+.offers-admin__row-actions { display:flex; align-items:center; justify-content:space-between; padding-left:81px; margin-top:10px; gap:10px; }
+.offers-admin__visibility,.offers-admin__text-button { border:0; padding:3px 0; background:transparent; color:#5c626c; font-size:11px !important; text-decoration:underline; text-decoration-color:#d2d5db; text-underline-offset:3px; }
+.offers-admin__icon-actions { display:flex; align-items:center; gap:3px; }
+.offers-admin__icon-actions button,.offers-admin__close { display:grid; place-items:center; padding:6px; border:1px solid transparent; border-radius:4px; background:transparent; color:#717883; }
+.offers-admin__icon-actions button:hover:enabled,.offers-admin__close:hover:enabled { border-color:#dfe2e6; background:#fff; color:#23272e; }
+.offers-admin__icon-actions .offers-admin__delete:hover:enabled { color:#a53333; }
+.offers-admin__order-note { padding:14px 19px; margin:0; font-size:11px; color:#858b94; line-height:1.6; }
+.offers-admin__editor { scroll-margin-top:20px; }
+.offers-admin__editor fieldset { display:grid; gap:21px; margin:0; border:0; padding:24px; min-width:0; }
+.offers-admin__editor label { display:grid; min-width:0; gap:7px; color:#444952; font-size:12px; font-weight:600; }
+.offers-admin__editor input:not([type="checkbox"]):not([type="file"]),.offers-admin__editor textarea { width:100%; min-width:0; min-height:39px; border:1px solid #d8dce2; border-radius:5px; padding:9px 11px; background:#fff; color:#25272b; font-size:13px; outline:none; }
+.offers-admin__editor input::placeholder,.offers-admin__editor textarea::placeholder { color:#a3a8b0; }
+.offers-admin__editor textarea { resize:vertical; min-height:88px; line-height:1.6; }
+.offers-admin__editor input:disabled,.offers-admin__editor textarea:disabled { background:#f8f9fa; color:#8a9099; }
+.offers-admin__editor label small,.offers-admin__image-field>p { margin:0; color:#858b94; font-size:11px; font-weight:400; line-height:1.5; }
+.offers-admin__image-field { display:grid; gap:9px; }
+.offers-admin__editor .offers-admin__upload { position:relative; display:flex; align-items:center; gap:11px; border:1px dashed #d5d9df; padding:14px 15px; border-radius:5px; color:#525963; cursor:pointer; }
+.offers-admin__upload>span { display:grid; gap:4px; font-size:12px; }
+.offers-admin__upload input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+.offers-admin__editor fieldset:disabled .offers-admin__upload,.offers-admin__editor fieldset:disabled .offers-admin__upload input { cursor:default; }
+.offers-admin__file-name { font-size:11px; color:#6b7380; overflow-wrap:anywhere; }
+.offers-admin__image-field>.offers-admin__text-button { justify-self:start; }
+.offers-admin__color-fields { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.offers-admin__color-field { display:grid; gap:7px; min-width:0; }
+.offers-admin__color-field>div { display:flex; align-items:center; gap:7px; min-width:0; }
+.offers-admin__editor .offers-admin__color-field input[type="color"] { flex:0 0 38px; width:38px; height:38px; min-height:0; padding:3px; border:1px solid #d8dce2; border-radius:5px; background:#fff; cursor:pointer; }
+.offers-admin__editor .offers-admin__color-field input:not([type="color"]) { width:100%; min-width:0; font-family:monospace; font-size:12px; padding-inline:8px; }
+.offers-admin__editor .offers-admin__publish { display:flex; align-items:flex-start; gap:10px; padding-top:2px; }
+.offers-admin__publish>input { margin:2px 0 0; accent-color:#17181a; width:15px; height:15px; flex:none; }
+.offers-admin__publish>span { display:grid; gap:5px; line-height:1.4; }
+.offers-admin__preview { margin:0 24px 22px; }
+.offers-admin__preview-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.offers-admin__preview-heading h3 { margin:0; font-size:11px; font-weight:600; color:#666d78; }
+.offers-admin__preview-heading>span { color:#949ba5; font-size:10px; }
+.offers-admin__preview-banner { display:flex; align-items:center; gap:12px; padding:12px 14px; background:#153866; color:#fff; border:1px solid #153866; border-radius:4px; overflow:hidden; }
+.offers-admin__preview-banner>img { flex:0 0 80px; width:80px; height:64px; object-fit:contain; display:block; }
+.offers-admin__preview-banner>div { min-width:0; }
+.offers-admin__preview-banner strong { display:block; font-size:14px; font-weight:700; line-height:1.5; overflow-wrap:anywhere; }
+.offers-admin__preview-banner p { margin:4px 0 0; color:inherit; opacity:.84; font-size:12px; line-height:1.6; white-space:pre-line; overflow-wrap:anywhere; }
+.offers-admin__preview-link { display:inline-flex; align-items:center; gap:5px; margin-top:7px; font-size:11px; font-weight:600; text-decoration:underline; text-underline-offset:3px; overflow-wrap:anywhere; }
+.offers-admin__error { margin:0 0 18px; border:1px solid #eddcdb; border-radius:5px; background:#fffafa; padding:11px 13px; color:#a13d3a; font-size:12px; line-height:1.6; }
+.offers-admin__editor>.offers-admin__error { margin:0 24px 19px; }
+.offers-admin__progress { margin:0 24px 18px; color:#606873; font-size:12px; }
+.offers-admin__editor footer { display:flex; align-items:center; justify-content:flex-end; gap:9px; padding:18px 24px; border-top:1px solid #e7e9ec; }
+.offers-admin__secondary { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #d9dce1; border-radius:5px; padding:9px 12px; background:#fff; color:#555c66; font-size:12px !important; font-weight:500; }
+.offers-admin__secondary:hover:enabled { background:#f7f8fa; color:#25272b; border-color:#c5cad2; }
+.offers-admin__editor footer .button { min-height:36px; padding:9px 13px; border-radius:5px; border-color:#17181a; background:#17181a; font-size:12px; font-weight:600; box-shadow:0 1px 1px rgba(0,0,0,.05); }
+.offers-admin__editor footer .button:hover:enabled { transform:none; border-color:#33363a; background:#33363a; }
+@media (max-width:1100px) { .offers-admin__workspace--editing { grid-template-columns:1fr; } .offers-admin__editor { grid-row:1; } }
+@media (max-width:600px) { .offers-admin__list-heading,.offers-admin__editor-heading { padding:17px; } .offers-admin__row { padding:15px; } .offers-admin__editor fieldset { padding:21px 17px; } .offers-admin__preview { margin-inline:17px; } .offers-admin__editor footer { padding:17px; } .offers-admin__editor>.offers-admin__error { margin-inline:17px; } .offers-admin__progress { margin-inline:17px; } .offers-admin__row-actions { padding-left:0; } .offers-admin__thumbnail { flex-basis:60px; width:60px; } .offers-admin__empty { padding-inline:18px; } }

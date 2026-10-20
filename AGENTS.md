@@ -2,6 +2,8 @@
 
 Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
 
+Keep the owner's local preview on port 5173 connected to the real Firebase configuration in `.env.local`. Run emulator QA on a separate port and browser context, and stop the test server afterward. Never leave the owner's preview connected to a demo project or test accounts.
+
 Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
 
 Mobile hero behavior: treat the hero background as a static composition on touch layouts. Do not rely on cursor/parallax interaction there; arrange the motorcycle, technician, and boat as distinct left/center/right background zones, and keep the Victiker emblem large and centered above the hero copy.
@@ -45,3 +47,7 @@ Orientación IA: personalizar la respuesta con los detalles concretos y distingu
 Cuando la orientación recomienda artículos que sí existen en el catálogo, enseñarlos dentro de la respuesta como fichas compactas con imagen, nombre, precio y disponibilidad, y ofrecer "Ver más productos" para abrir la búsqueda pertinente. No dejar la respuesta en una promesa de buscar opciones si ya se pueden mostrar resultados.
 
 Login: mantener un acceso limpio, sin etiqueta «Área privada», icono de candado ni subtítulo bajo el título de inicio de sesión. Conservar las instrucciones útiles de recuperación de contraseña.
+
+Ofertas: el propietario gestiona uno o varios banners desde «Ofertas» en administración, con texto, imagen subida y enlace opcionales, borradores y orden. Los publicados aparecen debajo de la cabecera en las páginas públicas y rotan automáticamente si hay varios; mantener controles de pausa y respetar movimiento reducido.
+
+Banners de ofertas: mantener una franja compacta, sin el rótulo «Ofertas del taller». El color de fondo y del texto se pueden editar por banner en el panel, con vista previa; el enlace es opcional y, si se deja vacío, no aparece ninguna llamada a la acción.

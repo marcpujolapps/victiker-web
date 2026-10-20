@@ -24,6 +24,7 @@ function resendDevApi(env) {
           const response = await worker.fetch(request, {
             RESEND_API_KEY: env.RESEND_API_KEY,
             RESEND_FROM_EMAIL: env.RESEND_FROM_EMAIL,
+            RESEND_TO_EMAIL: env.RESEND_TO_EMAIL,
           });
           res.writeHead(response.status, Object.fromEntries(response.headers));
           res.end(await response.text());

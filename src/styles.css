@@ -608,7 +608,8 @@
 .import-jobs article { padding:16px 0; }
 .import-jobs strong { color:#36393e; font-weight:600; }
 .import-jobs span { color:#3b8060; }
-.admin-message { border-radius:7px; }
+.admin-message { border-radius:7px; pointer-events:none; }
+.admin-message button { pointer-events:auto; }
 
 @media (max-width:820px) {
   .admin-shell { grid-template-columns:minmax(0,1fr); }

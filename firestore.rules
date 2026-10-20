@@ -14,11 +14,54 @@ service cloud.firestore {
     match /importJobs/{job} { allow read: if admin(); allow create, update, delete: if admin(); }
     match /bihrSyncJobs/{job} { allow read: if admin(); allow write: if false; }
     match /integrations/{integration} { allow read: if admin(); allow write: if false; }
+    // Offer content is public only while active. Creation audit fields are immutable.
+    // Required strings: title(1..120), description(0..280), imageUrl(0..2000),
+    // imagePath(0..300), linkUrl(0..1000), linkLabel(0..40); active: bool;
+    // order: int 0..9999; createdAt/updatedAt: timestamp; createdBy/updatedBy: uid.
+    // Optional backgroundColor/textColor: six-digit hex colors; legacy offers remain editable.
+    match /offers/{offerId} {
+      allow read: if resource.data.active == true || admin();
+      allow create: if admin() && validOffer()
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if admin() && validOffer()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.createdBy == resource.data.createdBy;
+      allow delete: if admin();
+    }
     match /requests/{requestId} {
       allow create: if validRequestCreate();
       allow read: if admin();
       allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notes', 'updatedAt']) && validRequestAdminUpdate();
       allow delete: if admin();
+    }
+
+    function validOfferLink(value) {
+      return value is string && value.size() <= 1000
+        && !value.matches('.*[\\s\\\\].*')
+        && (value == '' || value.matches('^/([^/].*)?$') || value.matches('^https?://[^/@]+(/.*|\\?.*|#.*)?$'));
+    }
+
+    function validOffer() {
+      let data = request.resource.data;
+      let fields = ['title', 'description', 'imageUrl', 'imagePath', 'linkUrl', 'linkLabel', 'active', 'order', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+      return data.keys().hasAll(fields) && data.keys().hasOnly(fields.concat(['backgroundColor', 'textColor']))
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 120
+        && data.description is string && data.description.size() <= 280
+        && data.linkLabel is string && data.linkLabel.size() <= 40
+        && validOfferLink(data.linkUrl)
+        && data.imageUrl is string && data.imageUrl.size() <= 2000
+        && data.imagePath is string && data.imagePath.size() <= 300
+        && ((data.imageUrl == '' && data.imagePath == '')
+          || (data.imageUrl.matches('^https?://[^/@]+/.*') && !data.imageUrl.matches('.*[\\s\\\\].*')
+            && data.imagePath.matches('^offer-images/[A-Za-z0-9_-]{1,128}/[A-Za-z0-9-]+\\.webp$')))
+        && data.active is bool
+        && data.order is int && data.order >= 0 && data.order <= 9999
+        && (!('backgroundColor' in data) || data.backgroundColor is string && data.backgroundColor.matches('^#[0-9a-fA-F]{6}$'))
+        && (!('textColor' in data) || data.textColor is string && data.textColor.matches('^#[0-9a-fA-F]{6}$'))
+        && data.createdAt is timestamp && data.updatedAt == request.time
+        && data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128
+        && data.updatedBy == request.auth.uid;
     }
 
     function validRequestCreate() {
